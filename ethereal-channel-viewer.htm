@@ -23,12 +23,12 @@ p              { margin: 0px; }
 		<div id="page-table">
 <!-- CONTENT -->
 			<div id="total-cell">
-
+<!-- USER MOD -->
 				<div class="content-table">
 					<div class="inline-block, title" id="current-user">No User Loaded</div>
 					<div class="inline-block"><input type="text" id="input-user" /><input type="button" value="Load User" id="button-user" onclick="LoadUser(document.getElementById('input-user').value);" /></div>
 				</div>
-
+<!-- CHANNEL MOD -->
 				<div class="content-table">
 					<div class="inline-block, title" id="current-channel">No Channel Selected</div>
 					<div class="inline-block">
@@ -37,21 +37,21 @@ p              { margin: 0px; }
 						<input type="button" value="Load Mixer Channel" id="button-channel-mixer" onclick="LoadChannel(document.getElementById('input-channel').value, 'mixer');" />
 					</div>
 				</div>
-
+<!-- FOLLOWS & CHANNEL & CHAT -->
 				<div class="content-table">
 					<div class="row">
-
+<!-- FOLLOWS -->
 						<div class="cell">
 							<p class="title"><span onclick="UpdateFollowListHelix();">twitch (click to update)</span></p>
 							<div id="follows-helix"></div>
 							<p class="title"><span onclick="UpdateFollowListMixer();">mixer (click to update)</span></p>
 							<div id="follows-mixer"></div>
 						</div>
-
+<!-- CHANNEL -->
 						<div class="cell">
 							<iframe id="frame-player" src="about:blank" frameborder="0" allowfullscreen="true" scrolling="no" width="1280" height="720"></iframe>
 						</div>
-
+<!-- CHAT -->
 						<div class="cell">
 							<iframe id="frame-chat" src="about:blank" frameborder="0" scrolling="no" width="340" height="720"></iframe>
 						</div>
@@ -101,7 +101,7 @@ function AssignButtons() {
 	});
 }
 
-// CHANGE CHANNEL, TWITCH
+// CHANGE CHANNEL
 function LoadChannel(channelName, service) {
 	if (channelName == "") {
 		document.getElementById("current-channel").innerHTML = "No Channel Selected";
