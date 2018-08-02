@@ -30,7 +30,7 @@ p              { margin: 0px; }
 				</div>
 <!-- CHANNEL MOD -->
 				<div class="content-table">
-					<div class="inline-block, title" id="current-channel">No Channel Selected</div>
+					<div class="inline-block, title" id="current-channel">No Channel Loaded</div>
 					<div class="inline-block">
 						<input type="text" id="input-channel-twitch" />
 						<input type="button" value="Load Twitch Channel" id="button-channel-twitch" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch');" />
@@ -105,7 +105,7 @@ function AssignButtons() {
 // CHANGE CHANNEL
 function LoadChannel(channelName, service) {
 	if (channelName == "") {
-		document.getElementById("current-channel").innerHTML = "No Channel Selected";
+		document.getElementById("current-channel").innerHTML = "No Channel Loaded";
 		document.getElementById("frame-player").setAttribute("src", "about:blank");
 		document.getElementById("frame-chat").setAttribute("src", "about:blank");
 	} else {
@@ -125,7 +125,7 @@ function LoadChannel(channelName, service) {
 function LoadUser(userName) {
 	var oldTable;
 	if (userName == "") {
-		document.getElementById("current-user").innerHTML = "No User Selected";
+		document.getElementById("current-user").innerHTML = "No User Loaded";
 		oldTable = document.getElementById("follow-table-helix");
 		if (oldTable) oldTable.parentNode.removeChild(oldTable);
 		oldTable = document.getElementById("follow-table-mixer");
