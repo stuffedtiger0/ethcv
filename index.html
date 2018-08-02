@@ -32,9 +32,10 @@ p              { margin: 0px; }
 				<div class="content-table">
 					<div class="inline-block, title" id="current-channel">No Channel Selected</div>
 					<div class="inline-block">
-						<input type="text" id="input-channel" />
-						<input type="button" value="Load Twitch Channel" id="button-channel-twitch" onclick="LoadChannel(document.getElementById('input-channel').value, 'twitch');" />
-						<input type="button" value="Load Mixer Channel" id="button-channel-mixer" onclick="LoadChannel(document.getElementById('input-channel').value, 'mixer');" />
+						<input type="text" id="input-channel-twitch" />
+						<input type="button" value="Load Twitch Channel" id="button-channel-twitch" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch');" />
+						<input type="text" id="input-channel-mixer" />
+						<input type="button" value="Load Mixer Channel" id="button-channel-mixer" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer');" />
 					</div>
 				</div>
 <!-- FOLLOWS & CHANNEL & CHAT -->
@@ -78,14 +79,14 @@ var userMixer;
 // PRESSING ENTER IN TEXT BOX WILL INVOKE BUTTON
 function AssignButtons() {
 	var element;
-	element = document.getElementById("input-channel");
+	element = document.getElementById("input-channel-twitch");
 	element.addEventListener("keyup", function(event) {
 		event.preventDefault();
 		if (event.keyCode == 13) {
 			document.getElementById("button-channel-twitch").click();
 		}
 	});
-	element = document.getElementById("input-channel");
+	element = document.getElementById("input-channel-mixer");
 	element.addEventListener("keyup", function(event) {
 		event.preventDefault();
 		if (event.keyCode == 13) {
