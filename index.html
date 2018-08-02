@@ -5,16 +5,16 @@
 		<title>Ethereal Channel Viewer</title>
 		<style>
 html           { height: 100%; }
-body           { height: 100%; margin: 0px; background-color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; color: #262626; }
+body           { height: 100%; margin: 0; background-color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; color: #262626; }
 a              { text-decoration: none; }
-p              { margin: 0px; }
+p              { margin: 0; }
 .inline-block  { display: inline-block; }
 .table         { display: table; width: 100%; }
 .row           { display: table-row; }
 .cell          { display: table-cell; vertical-align: middle; }
 .content-table { display: inline-table; vertical-align: middle; }
 .title         { font-weight: bold; }
-#page-table    { display: table; text-align: center; height: 100%; }
+#page-table    { display: table; height: 100%; text-align: center; }
 #total-cell    { display: table-cell; height: 100%; vertical-align: middle; }
 		</style>
 	</head>
@@ -63,7 +63,6 @@ p              { margin: 0px; }
 			</div>
 		</div>
 		<script>
-
 var twitchPlayerFront = "https://player.twitch.tv/?channel=";
 var twitchPlayerBack  = "&muted=false";
 var twitchChatFront   = "https://www.twitch.tv/embed/";
@@ -325,7 +324,6 @@ function UpdateFollowListMixer() {
 		});
 	}
 }
-
 		</script>
 	</body>
 </html>
