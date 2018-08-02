@@ -50,7 +50,7 @@ p              { margin: 0; }
 						</div>
 <!-- CHANNEL -->
 						<div class="cell">
-							<iframe id="frame-player" src="about:blank" frameborder="0" allowfullscreen="true" scrolling="no" width="1280" height="720"></iframe>
+							<iframe id="frame-player" src="https://player.twitch.tv/?channel=" frameborder="0" allowfullscreen="true" scrolling="no" width="1280" height="720"></iframe>
 						</div>
 <!-- CHAT -->
 						<div class="cell">
@@ -63,13 +63,6 @@ p              { margin: 0; }
 			</div>
 		</div>
 		<script>
-var twitchPlayerFront = "https://player.twitch.tv/?channel=";
-var twitchPlayerBack  = "&muted=false";
-var twitchChatFront   = "https://www.twitch.tv/embed/";
-var twitchChatBack    = "/chat";
-var mixerPlayerFront  = "https://mixer.com/embed/player/";
-var mixerChatFront    = "https://mixer.com/embed/chat/";
-var mixerBack         = "?disableLowLatency=1";
 var countHelix = 0;
 var countMixer = 0;
 var urlStreamsTwitch;
@@ -110,12 +103,12 @@ function LoadChannel(channelName, service) {
 	} else {
 		document.getElementById("current-channel").innerHTML = channelName;
 		if (service == "twitch") {
-			document.getElementById("frame-player").setAttribute("src", twitchPlayerFront+channelName+twitchPlayerBack);
-			document.getElementById("frame-chat").setAttribute("src", twitchChatFront+channelName+twitchChatBack);
+			document.getElementById("frame-player").setAttribute("src", "https://player.twitch.tv/?channel="+channelName+"&muted=false");
+			document.getElementById("frame-chat").setAttribute("src", "https://www.twitch.tv/embed/"+channelName+"/chat");
 			document.getElementById("frame-chat").setAttribute("width", "340");
 		} else {
-			document.getElementById("frame-player").setAttribute("src", mixerPlayerFront+channelName+mixerBack);
-			document.getElementById("frame-chat").setAttribute("src", mixerChatFront+channelName+mixerBack);
+			document.getElementById("frame-player").setAttribute("src", "https://mixer.com/embed/player/"+channelName);
+			document.getElementById("frame-chat").setAttribute("src", "https://mixer.com/embed/chat/"+channelName);
 			document.getElementById("frame-chat").setAttribute("width", "378");
 		}
 	}
