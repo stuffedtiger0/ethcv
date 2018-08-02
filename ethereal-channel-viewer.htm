@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="jquery-3.3.1.min.js"></script>
+		<title>Ethereal Channel Viewer</title>
+		<style>
+html           { height: 100%; }
+body           { height: 100%; margin: 0px; background-color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; color: #262626; }
+a              { text-decoration: none; }
+p              { margin: 0px; }
+.inline-block  { display: inline-block; }
+.table         { display: table; width: 100%; }
+.row           { display: table-row; }
+.cell          { display: table-cell; vertical-align: middle; }
+.content-table { display: inline-table; vertical-align: middle; }
+.title         { font-weight: bold; }
+#page-table    { display: table; text-align: center; height: 100%; }
+#total-cell    { display: table-cell; height: 100%; vertical-align: middle; }
+		</style>
+	</head>
+	<body onload="AssignButtons();">
+<!-- PAGE -->
+		<div id="page-table">
+<!-- CONTENT -->
+			<div id="total-cell">
+
+				<div class="content-table">
+					<div class="inline-block, title" id="current-user">No User Loaded</div>
+					<div class="inline-block"><input type="text" id="input-user" /><input type="button" value="Load User" id="button-user" onclick="LoadUser(document.getElementById('input-user').value);" /></div>
+				</div>
+
+				<div class="content-table">
+					<div class="inline-block, title" id="current-channel">No Channel Selected</div>
+					<div class="inline-block">
+						<input type="text" id="input-channel" />
+						<input type="button" value="Load Twitch Channel" id="button-channel-twitch" onclick="LoadChannel(document.getElementById('input-channel').value, 'twitch');" />
+						<input type="button" value="Load Mixer Channel" id="button-channel-mixer" onclick="LoadChannel(document.getElementById('input-channel').value, 'mixer');" />
+					</div>
+				</div>
+
+				<div class="content-table">
+					<div class="row">
+
+						<div class="cell">
+							<p class="title"><span onclick="UpdateFollowListHelix();">twitch (click to update)</span></p>
+							<div id="follows-helix"></div>
+							<p class="title"><span onclick="UpdateFollowListMixer();">mixer (click to update)</span></p>
+							<div id="follows-mixer"></div>
+						</div>
+
+						<div class="cell">
+							<iframe id="frame-player" src="about:blank" frameborder="0" allowfullscreen="true" scrolling="no" width="1280" height="720"></iframe>
+						</div>
+
+						<div class="cell">
+							<iframe id="frame-chat" src="about:blank" frameborder="0" scrolling="no" width="340" height="720"></iframe>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<script>
+
+var twitchPlayerFront = "https://player.twitch.tv/?channel=";
+var twitchPlayerBack  = "&muted=false";
+var twitchChatFront   = "https://www.twitch.tv/embed/";
+var twitchChatBack    = "/chat";
+var mixerPlayerFront  = "https://mixer.com/embed/player/";
+var mixerChatFront    = "https://mixer.com/embed/chat/";
+var mixerBack         = "?disableLowLatency=1";
+var countHelix = 0;
+var countMixer = 0;
+var urlStreamsTwitch;
+var userMixer;
+
+// PRESSING ENTER IN TEXT BOX WILL INVOKE BUTTON
+function AssignButtons() {
+	var element;
+	element = document.getElementById("input-channel");
+	element.addEventListener("keyup", function(event) {
+		event.preventDefault();
+		if (event.keyCode == 13) {
+			document.getElementById("button-channel-twitch").click();
+		}
+	});
+	element = document.getElementById("input-channel");
+	element.addEventListener("keyup", function(event) {
+		event.preventDefault();
+		if (event.keyCode == 13) {
+			document.getElementById("button-channel-mixer").click();
+		}
+	});
+	element = document.getElementById("input-user");
+	element.addEventListener("keyup", function(event) {
+		event.preventDefault();
+		if (event.keyCode == 13) {
+			document.getElementById("button-user").click();
+		}
+	});
+}
+
+// CHANGE CHANNEL, TWITCH
+function LoadChannel(channelName, service) {
+	if (channelName == "") {
+		document.getElementById("current-channel").innerHTML = "No Channel Selected";
+		document.getElementById("frame-player").setAttribute("src", "about:blank");
+		document.getElementById("frame-chat").setAttribute("src", "about:blank");
+	} else {
+		document.getElementById("current-channel").innerHTML = channelName;
+		if (service == "twitch") {
+			document.getElementById("frame-player").setAttribute("src", twitchPlayerFront+channelName+twitchPlayerBack);
+			document.getElementById("frame-chat").setAttribute("src", twitchChatFront+channelName+twitchChatBack);
+			document.getElementById("frame-chat").setAttribute("width", "340");
+		} else {
+			document.getElementById("frame-player").setAttribute("src", mixerPlayerFront+channelName+mixerBack);
+			document.getElementById("frame-chat").setAttribute("src", mixerChatFront+channelName+mixerBack);
+			document.getElementById("frame-chat").setAttribute("width", "378");
+		}
+	}
+}
+
+function LoadUser(userName) {
+	var oldTable;
+	if (userName == "") {
+		document.getElementById("current-user").innerHTML = "No User Selected";
+		oldTable = document.getElementById("follow-table-helix");
+		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTable = document.getElementById("follow-table-mixer");
+		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+	} else {
+		document.getElementById("current-user").innerHTML = userName;
+		oldTable = document.getElementById("follow-table-helix");
+		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTable = document.getElementById("follow-table-mixer");
+		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		CreateFollowListHelix(userName);
+		CreateFollowListMixer(userName);
+		userNameMixer = userName;
+	}
+}
+
+// CREATE FOLLOW LIST, HELIX
+function CreateFollowListHelix(userName) {
+	$.ajax({
+		type: 'GET',
+		url: 'https://api.twitch.tv/helix/users?login=' + userName,
+		headers: { 'Client-ID': '88pfy9ckfkxt3mp678i4ar9b0tr2q6' },
+		success: function(data) {
+			//console.log(data);
+			userMixer = data.data[0].id;
+			$.ajax({
+				type: 'GET',
+				url: 'https://api.twitch.tv/helix/users/follows?from_id=' + data.data[0].id,
+				headers: { 'Client-ID': '88pfy9ckfkxt3mp678i4ar9b0tr2q6' },
+				success: function(data) {
+					//console.log(data);
+					countHelix = data.data.length;
+					var isFirstId = true;
+					var urlUsersTwitch = "https://api.twitch.tv/helix/users";
+					urlStreamsTwitch = "https://api.twitch.tv/helix/streams";
+					// create table for helix follow list
+					var table = document.createElement('div');
+					table.classList.add('table');
+					table.setAttribute("id", "follow-table-helix");
+					document.getElementById('follows-helix').appendChild(table);
+					for (var ii = 0 ; ii < countHelix ; ii++) {
+						// create table structure: row -> cell -> p -> span
+						var row = document.createElement('div');
+						row.classList.add('row');
+						table.appendChild(row);
+						var cell = document.createElement('div');
+						cell.classList.add('cell');
+						row.appendChild(cell);
+						var p = document.createElement('p');
+						cell.appendChild(p);
+						var span = document.createElement('span');
+						span.setAttribute('id', 'helix' + ii); // set element ID
+						p.appendChild(span);
+						$('#helix' + ii).data( { id: data.data[ii].to_id } ); // set element.data('id')
+						if (isFirstId) { // create complete URL for all-in-one name request
+							urlUsersTwitch = urlUsersTwitch + '?id=' + $('#helix' + ii).data('id');
+							urlStreamsTwitch = urlStreamsTwitch + '?user_id=' + $('#helix' + ii).data('id');
+							isFirstId = false;
+						} else {
+							urlUsersTwitch = urlUsersTwitch + '&id=' + $('#helix' + ii).data('id');
+							urlStreamsTwitch = urlStreamsTwitch + '&user_id=' + $('#helix' + ii).data('id');
+						}
+					}
+					$.ajax({
+						type: 'GET',
+						url: urlUsersTwitch,
+						headers: { 'Client-ID': '88pfy9ckfkxt3mp678i4ar9b0tr2q6' },
+						success: function(data) {
+							//console.log(data);
+							for (var jj = 0 ; jj < data.data.length ; jj++) {
+								for (var ii = 0 ; ii < countHelix ; ii++) {
+									if ($('#helix' + ii).data('id') == data.data[jj].id) {
+										document.getElementById('helix' + ii).innerHTML = data.data[jj].login; // display names from twitch IDs
+										$('#helix' + ii).data( { name: data.data[jj].login } ); // set element.data('name')
+										document.getElementById('helix' + ii).onclick = function(event) { LoadChannel($(event.target).data('name'), 'twitch'); }; // create links for fast channel changes
+									}
+								}
+							}
+						}
+					});
+					$.ajax({
+						type: 'GET',
+						url: urlStreamsTwitch,
+						headers: { 'Client-ID': '88pfy9ckfkxt3mp678i4ar9b0tr2q6' },
+						success: function(data) {
+							//console.log(data);
+							for (var jj = 0 ; jj < data.data.length ; jj++) { // double for loop to match returned twitch user ID with element.data('id')
+								for (var ii = 0 ; ii < countHelix ; ii++) {
+									if (data.data[jj].user_id == $('#helix' + ii).data('id')) {
+										if (data.data[jj].type == 'live') {
+											document.getElementById('helix' + ii).style.backgroundColor = 'lightgreen'; // change background color of name if stream is live
+										}
+									}
+								}
+							}
+						}
+					});
+
+				}
+			});
+		}
+	});
+}
+
+// UPDATE FOLLOW LIST, HELIX
+function UpdateFollowListHelix() {
+	var table = document.getElementById("follow-table-helix");
+	if (table) {
+		$.ajax({
+			type: 'GET',
+			url: urlStreamsTwitch,
+			headers: { 'Client-ID': '88pfy9ckfkxt3mp678i4ar9b0tr2q6' },
+			success: function(data) {
+				//console.log(data);
+				for (var ii = 0 ; ii < countHelix ; ii++) {
+					document.getElementById('helix' + ii).style.backgroundColor = 'initial'; // set background color of names to default
+				}
+				for (var jj = 0 ; jj < data.data.length ; jj++) { // double for loop to match returned twitch user ID with element.data('id')
+					for (var ii = 0 ; ii < countHelix ; ii++) {
+						if (data.data[jj].user_id == $('#helix' + ii).data('id')) {
+							if (data.data[jj].type == 'live') {
+								document.getElementById('helix' + ii).style.backgroundColor = 'lightgreen'; // change background color of name if stream is live
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+}
+
+// CREATE FOLLOW LIST, MIXER
+function CreateFollowListMixer(userName) {
+	$.ajax({
+		type: 'GET',
+		url: 'https://mixer.com/api/v1/channels/' + userName,
+		headers: { 'Client-ID': '07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6' },
+		success: function(data, textstatus, jqxhr) {
+			//console.log(data);
+			//console.log(jqxhr.getResponseHeader('x-total-count'));
+			$.ajax({
+				type: 'GET',
+				url: 'https://mixer.com/api/v1/users/' + data.user.id + '/follows',
+				headers: { 'Client-ID': '07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6' },
+				success: function(data, textstatus, jqxhr) {
+					//console.log(data);
+					countMixer = data.length;
+					// create table for mixer follow list
+					var table = document.createElement('div');
+					table.classList.add('table');
+					table.setAttribute("id", "follow-table-mixer");
+					document.getElementById('follows-mixer').appendChild(table);
+					for (var ii = 0 ; ii < countMixer ; ii++) {
+						// create table structure: row -> cell -> p -> span
+						var row = document.createElement('div');
+						row.classList.add('row');
+						table.appendChild(row);
+						var cell = document.createElement('div');
+						cell.classList.add('cell');
+						row.appendChild(cell);
+						var p = document.createElement('p');
+						cell.appendChild(p);
+						var span = document.createElement('span');
+						span.setAttribute('id', 'mixer' + ii); // set element ID
+						p.appendChild(span);
+						$('#mixer' + ii).data( { id: data[ii].id } ); // set element.data('id')
+						$('#mixer' + ii).data( { name: data[ii].token } ); // set element.data('name')
+						document.getElementById('mixer' + ii).innerHTML = data[ii].token; // display names from mixer IDs
+						document.getElementById('mixer' + ii).onclick = function(event) { LoadChannel($(event.target).data('name'), 'mixer'); }; // create links for fast channel changes
+						if (data[ii].online == true) {
+							document.getElementById('mixer' + ii).style.backgroundColor = 'lightgreen'; // change background color of name if stream is live
+						}
+					}
+				}
+			});
+		}
+	});
+}
+
+// UPDATE FOLLOW LIST, MIXER
+function UpdateFollowListMixer() {
+	var table = document.getElementById("follow-table-mixer");
+	if (table) {
+		$.ajax({
+			type: 'GET',
+			url: 'https://mixer.com/api/v1/users/' + userMixer + '/follows?noCount=true',
+			headers: { 'Client-ID': '07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6' },
+			success: function(data, textstatus, jqxhr) {
+				//console.log(data);
+				for (var ii = 0 ; ii < countMixer ; ii++) {
+					if (data[ii].online == false) { // change background color of name based on live status
+						document.getElementById('mixer' + ii).style.backgroundColor = 'initial';
+					} else {
+						document.getElementById('mixer' + ii).style.backgroundColor = 'lightgreen';
+					}
+				}
+			}
+		});
+	}
+}
+
+		</script>
+	</body>
+</html>
