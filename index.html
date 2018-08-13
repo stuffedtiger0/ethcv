@@ -114,6 +114,7 @@ var hasCountTwitch, hasCountMixer;
 var tableT, rowT, cellT, pT, spanT;
 var tableM, rowM, cellM, pM, spanM;
 var ii, jj;
+var error;
 //var reset;
 
 function AssignButtons() {
@@ -188,7 +189,11 @@ function CreateFollowListHelix() {
 			//console.log(data);
 			//reset = jqxhr.getResponseHeader("Ratelimit-Remaining");
 			dataUserTwitch = data;
-			GetFollowsHelix(true, false);
+		},
+		complete: function(jqxhr, status) {
+			if (status == "success") {
+				GetFollowsHelix(true, false);
+			}
 		}
 	});
 }
@@ -245,8 +250,10 @@ function GetFollowsHelix(init, destroy) {
 				}
 			}
 		},
-		complete: function() {
-			return GetUsersHelix();
+		complete: function(jqxhr, status) {
+			if (status == "success") {
+				return GetUsersHelix();
+			}
 		}
 	});
 }
@@ -265,8 +272,10 @@ function GetUsersHelix() {
 				userObjT.user[dataUsersTwitch.data[ii].login] = { id: dataUsersTwitch.data[ii].id, viewers: "", live: "", title: "" };
 			}
 		},
-		complete: function() {
-			return GetStreamsHelix();
+		complete: function(jqxhr, status) {
+			if (status == "success") {
+				return GetStreamsHelix();
+			}
 		}
 	});
 }
@@ -290,12 +299,14 @@ function GetStreamsHelix() {
 				}
 			}
 		},
-		complete: function() {
-			$.when(AfterGetsHelix()).done( function() {
-				if (countHelix > 0 && userIndexTwitch < 20) {
-					return GetFollowsHelix(false, false);
-				}
-			});
+		complete: function(jqxhr, status) {
+			if (status == "success" ) {
+				$.when(AfterGetsHelix()).done( function() {
+					if (countHelix > 0 && userIndexTwitch < 20) {
+						return GetFollowsHelix(false, false);
+					}
+				});
+			}
 		}
 	});
 }
@@ -336,7 +347,11 @@ function CreateFollowListMixer() {
 		success: function(data, status, jqxhr) {
 			//console.log(data);
 			dataUserMixer = data;
-			GetFollowsMixer(true, false);
+		},
+		complete: function(jqxhr, status) {
+			if (status == "success") {
+				GetFollowsMixer(true, false);
+			}
 		}
 	});
 }
@@ -402,9 +417,11 @@ function GetFollowsMixer(init, destroy) {
 				}
 			}
 		},
-		complete: function() {
-			if (countMixer > 0 && userIndexMixer < 20) {
-				return GetFollowsMixer(false, false);
+		complete: function(jqxhr, status) {
+			if (status == "success") {
+				if (countMixer > 0 && userIndexMixer < 20) {
+					return GetFollowsMixer(false, false);
+				}
 			}
 		}
 	});
