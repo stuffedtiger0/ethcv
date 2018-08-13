@@ -65,7 +65,7 @@ p              { margin: 0; }
 		</div>
 		<script>
 var g_userName;
-var oldTable;
+var oldTableT, oldTableM;
 var countHelix, countMixer;
 var pageHelix, pageMixer;
 var urlUsersTwitch, urlStreamsTwitch;
@@ -125,20 +125,19 @@ function LoadChannel(channelName, service) {
 function LoadUser(userName) {
 	if (userName == "") {
 		document.getElementById("current-user").innerHTML = "No User Loaded";
-		oldTable = document.getElementById("follow-table-helix");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
-		oldTable = document.getElementById("follow-table-mixer");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTableT = document.getElementById("follow-table-helix");
+		if (oldTableT) oldTableT.parentNode.removeChild(oldTableT);
+		oldTableM = document.getElementById("follow-table-mixer");
+		if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
 	} else {
 		document.getElementById("current-user").innerHTML = userName;
-		oldTable = document.getElementById("follow-table-helix");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
-		oldTable = document.getElementById("follow-table-mixer");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTableT = document.getElementById("follow-table-helix");
+		if (oldTableT) oldTableT.parentNode.removeChild(oldTableT);
+		oldTableM = document.getElementById("follow-table-mixer");
+		if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
 		g_userName = userName;
 		CreateFollowListHelix();
 		CreateFollowListMixer();
-		userNameMixer = userName;
 	}
 }
 
@@ -169,8 +168,8 @@ function GetFollowsHelix(init, destroy) {
 	}
 
 	if (destroy) {
-		oldTable = document.getElementById("follow-table-helix");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTableT = document.getElementById("follow-table-helix");
+		if (oldTableT) oldTableT.parentNode.removeChild(oldTableT);
 		tableT = document.createElement("div");
 		tableT.classList.add("table");
 		tableT.setAttribute("id", "follow-table-helix");
@@ -312,8 +311,8 @@ function GetFollowsMixer(init, destroy) {
 	}
 
 	if (destroy) {
-		oldTable = document.getElementById("follow-table-mixer");
-		if (oldTable) oldTable.parentNode.removeChild(oldTable);
+		oldTableM = document.getElementById("follow-table-mixer");
+		if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
 		tableM = document.createElement("div");
 		tableM.classList.add("table");
 		tableM.setAttribute("id", "follow-table-mixer");
@@ -322,7 +321,7 @@ function GetFollowsMixer(init, destroy) {
 
 	$.ajax({
 		type: "GET",
-		url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=25&page=" + pageMixer,
+		url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=100&page=" + pageMixer,
 		headers: { "Client-ID": "07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6" },
 		success: function(data, textstatus, jqxhr) {
 			console.log(data);
