@@ -327,7 +327,7 @@ function GetFollowsMixer(init, destroy) {
 		url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=100&page=" + pageMixer,
 		headers: { "Client-ID": "07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6" },
 		success: function(data, textstatus, jqxhr) {
-			//console.log(data);
+			console.log(data);
 			dataFollowsMixer = data;
 
 			if (!hasCountMixer) {
@@ -353,8 +353,9 @@ function GetFollowsMixer(init, destroy) {
 					spanM = document.createElement("span");
 					pM.appendChild(spanM);
 					spanM.innerHTML = dataFollowsMixer[ii].token; // display names from mixer IDs
-					spanM.onclick = function(event) { LoadChannel(event.target.innerHTML, "mixer"); }; // create links for fast channel changes
 					spanM.style.backgroundColor = "lightgreen"; // change background color of name
+					spanM.title = dataFollowsMixer[ii].name;
+					spanM.onclick = function(event) { LoadChannel(event.target.innerHTML, "mixer"); }; // create links for fast channel changes
 					userIndexMixer++;
 				}
 			}
