@@ -327,7 +327,7 @@ function GetFollowsMixer(init, destroy) {
 		url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=100&page=" + pageMixer,
 		headers: { "Client-ID": "07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6" },
 		success: function(data, textstatus, jqxhr) {
-			console.log(data);
+			//console.log(data);
 			dataFollowsMixer = data;
 
 			if (!hasCountMixer) {
