@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <script src="jquery-3.3.1.min.js"></script>
     <title>Ethereal Channel Viewer</title>
+
     <style>
 html                { height: 100%; }
 body                { height: 100%; margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; }
@@ -26,7 +27,14 @@ div.inline-block    { display: inline-block; }
 iframe              { display: block; }
 table               { border-collapse: collapse; border: 0px solid red; }
 td                  { padding: 0px; }
+
+.resoButton { background-color: #F1F1F1; color: #262626; padding: 10px; border: none; cursor: pointer; }
+.resodrop-content { display: none; position: absolute; background-color: #F1F1F1; color: #262626; min-width: 150px; overflow: hidden; z-index: 1; }
+.resodrop-content a { display: block; padding: 6px 0px; cursor: pointer; }
+.resodrop-content a:hover { background-color: #262626; color: #F1F1F1; }
+.show { display: block; }
     </style>
+
   </head>
   <body onload="AssignButtons();ChangeResolution('360p');">
 <!-- PAGE TABLE -->
@@ -45,9 +53,9 @@ td                  { padding: 0px; }
               </div>
               <div class="row">
                 <div class="cell">
-                  <p class="title"><span title="click to update" onclick="UpdateFollowListHelix();">[twitch]</span></p>
+                  <p class="title"><span title="click to update" onclick="UpdateFollowListHelix()">[twitch]</span></p>
                   <div id="follows-helix"></div>
-                  <p class="title"><span title="click to update" onclick="UpdateFollowListMixer();">[mixer]</span></p>
+                  <p class="title"><span title="click to update" onclick="UpdateFollowListMixer()">[mixer]</span></p>
                   <div id="follows-mixer"></div>
                 </div>
               </div>
@@ -61,24 +69,28 @@ td                  { padding: 0px; }
                   <table style="display: inline-table;">
                     <tr>
                       <td>
-                        <fieldset>
-                          <legend>Player & Chat</legend>
-                          <input type="radio" name="reso" value="360p" onclick="ChangeResolution(event.target.value);" checked />360p<input type="radio" name="reso" value="480p" onclick="ChangeResolution(event.target.value);" />480p<input type="radio" name="reso" value="720p" onclick="ChangeResolution(event.target.value);" />720p
-                        </fieldset>
+                        <div class="dropdown">
+                          <button onclick="showResoDropdown()" class="resoButton">Player/Chat Dimensions</button>
+                          <div id="resoDropdown" class="resodrop-content">
+                            <a onclick="ChangeResolution('360p')">360p</a>
+                            <a onclick="ChangeResolution('480p')">480p</a>
+                            <a onclick="ChangeResolution('720p')">720p</a>
+                          </div>
+                        </div>
                       </td>
                       <td>
                         <fieldset>
                           <legend>User</legend>
                           <p class="title" id="current-user">No User Loaded</p>
-                          <input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value);" />
+                          <input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value)" />
                         </fieldset>
                       </td>
                       <td>
                         <fieldset>
                           <legend>Channel</legend>
                           <p class="title" id="current-channel">No Channel Loaded</p>
-                          <input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch');" /><br />
-                          <input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer');" />
+                          <input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch')" /><br />
+                          <input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer')" />
                         </fieldset>
                       </td>
                     </tr>
@@ -98,6 +110,7 @@ td                  { padding: 0px; }
         </div>
       </div>
     </div>
+
     <script>
 var g_userName;
 var isFirstId;
@@ -138,6 +151,10 @@ function AssignButtons() {
       document.getElementById("button-user").click();
     }
   });
+}
+
+function showResoDropdown() {
+  document.getElementById("resoDropdown").classList.toggle("show");
 }
 
 function ChangeResolution(newReso) {
@@ -343,7 +360,7 @@ function AfterGetsHelix() {
       spanT.index = dataUsersTwitch.data[ii].login;
       spanT.innerHTML = dataUsersTwitch.data[ii].login + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)"; // display names from twitch IDs
       spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
-      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); }; // create links for fast channel changes
+      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch") }; // create links for fast channel changes
       userIndexTwitch++;
     }
   }
@@ -425,7 +442,7 @@ function GetFollowsMixer(init, destroy) {
           spanM.index = dataFollowsMixer[ii].token;
           spanM.innerHTML = dataFollowsMixer[ii].token + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)"; // display names from mixer IDs
           spanM.title = dataFollowsMixer[ii].name;
-          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); }; // create links for fast channel changes
+          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer") }; // create links for fast channel changes
           userIndexMixer++;
         }
       }
@@ -444,6 +461,15 @@ function UpdateFollowListMixer() {
   GetFollowsMixer(true, true);
 }
 
+window.onclick = function(event) {
+  if (!event.target.matches('.resoButton')) {
+    var resoDropdown = document.getElementById("resoDropdown");
+    if (resoDropdown.classList.contains('show')) {
+        resoDropdown.classList.remove('show');
+    }
+  }
+}
+
 /*
 function UpdateResetForm() {
   if (reset) {
@@ -459,5 +485,6 @@ var x = setInterval(UpdateResetForm(), 1000);
 */
 
     </script>
+
   </body>
 </html>
