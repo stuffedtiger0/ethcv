@@ -59,10 +59,10 @@ td                  { padding: 0px; }
                 <div class="divcell">
                   <p class="title"><span class="spanlink" title="click to update twitch list" onclick="UpdateFollowListHelix()">[twitch]</span></p>
                   <p class="loading" id="loading-helix">LOADING...</p>
-                  <div class="loading" id="follows-helix"></div>
+                  <div id="follows-helix"></div>
                   <p class="title"><span class="spanlink" title="click to update mixer list" onclick="UpdateFollowListMixer()">[mixer]</span></p>
                   <p class="loading" id="loading-mixer">LOADING...</p>
-                  <div class="loading" id="follows-mixer"></div>
+                  <div id="follows-mixer"></div>
                 </div>
               </div>
             </div>
@@ -76,7 +76,7 @@ td                  { padding: 0px; }
                     <tr>
                       <td class="selector-section-td">
                         <div class="selector-section-div">
-                          <button class="select-button" onclick="ToggleShow('resoDropdown')">Player/Chat Dimensions</button>
+                          <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Player/Chat Dimensions</button>
                           <div class="dropdown-content" id="resoDropdown">
                             <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
                             <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
@@ -86,7 +86,7 @@ td                  { padding: 0px; }
                       </td>
                       <td class="selector-section-td">
                         <div class="selector-section-div">
-                          <button class="select-button" id="current-user" onclick="ToggleShow('userDropdown')">User</button>
+                          <button class="select-button" id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
                           <div class="dropdown-content" id="userDropdown">
                             <span><input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value)" /></span>
                           </div>
@@ -94,7 +94,7 @@ td                  { padding: 0px; }
                       </td>
                       <td class="selector-section-td">
                         <div class="selector-section-div">
-                          <button class="select-button" id="current-channel" onclick="ToggleShow('channelDropdown')">Channel</button>
+                          <button class="select-button" id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
                           <div class="dropdown-content" id="channelDropdown">
                             <span><input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch')" /></span>
                             <span><input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer')" /></span>
@@ -161,14 +161,12 @@ function AssignButtons() {
   });
 }
 
-function ToggleShow(selector) {
+function ToggleDisplay(selector) {
   return document.getElementById(selector).classList.toggle("show");
 }
 
 function ChangeResolution(newReso) {
-  if (resoDropdown.classList.contains('show')) {
-    resoDropdown.classList.remove('show');
-  }
+  if (resoDropdown.classList.contains('show')) resoDropdown.classList.remove('show');
   var date = new Date();
   date.setTime(date.getTime()+(30*24*60*60*1000));
   var expires = "; expires="+date.toGMTString();
@@ -208,9 +206,7 @@ function ChangeResolution(newReso) {
 }
 
 function LoadChannel(channelName, service) {
-  if (channelDropdown.classList.contains("show")) {
-    channelDropdown.classList.remove("show");
-  }
+  if (channelDropdown.classList.contains("show")) channelDropdown.classList.remove("show");
   if (channelName == "") {
     document.getElementById("current-channel").innerHTML = "No Channel Loaded";
     document.getElementById("frame-player").setAttribute("src", "about:blank");
@@ -230,9 +226,7 @@ function LoadChannel(channelName, service) {
 }
 
 function LoadUser(userName) {
-  if (userDropdown.classList.contains("show")) {
-    userDropdown.classList.remove("show");
-  }
+  if (userDropdown.classList.contains("show")) userDropdown.classList.remove("show");
   if (userName == "") {
     document.getElementById("current-user").innerHTML = "No User Loaded";
     oldTableT = document.getElementById("follow-table-helix");
@@ -246,8 +240,8 @@ function LoadUser(userName) {
     oldTableM = document.getElementById("follow-table-mixer");
     if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
     g_userName = userName;
-    StepOneHelix();
-    StepOneMixer();
+
+    return StepOneHelix();
   }
 }
 
@@ -264,7 +258,9 @@ function StepOneHelix() {
     },
     complete: function(jqxhr, status) {
       if (status == "success") {
-        StepTwoHelix(true, false, false);
+        return StepTwoHelix(true, false, false);
+      } else {
+        return StepOneMixer();
       }
     }
   });
@@ -281,9 +277,6 @@ function StepTwoHelix(init, destroy, update) {
       tableT.setAttribute("id", "follow-table-helix");
       document.getElementById("follows-helix").appendChild(tableT);
     }
-    if (!update) {
-      ToggleShow("loading-helix");
-    }
   }
 
   if (destroy) {
@@ -295,10 +288,9 @@ function StepTwoHelix(init, destroy, update) {
     document.getElementById("follows-helix").appendChild(tableT);
   }
 
-  if (update) {
-    ToggleShow("loading-helix");
-    ToggleShow("follows-helix");
-  }
+  document.getElementById("follows-helix").style.display = "none";
+  document.getElementById("loading-helix").style.display = "block";
+
 
   $.ajax({
     type: "GET",
@@ -334,8 +326,9 @@ function StepTwoHelix(init, destroy, update) {
       if (status == "success") {
         return StepThreeHelix();
       } else {
-        ToggleShow("loading-helix");
-        ToggleShow("follows-helix");
+        document.getElementById("loading-helix").style.display = "none";
+        document.getElementById("follows-helix").style.display = "block";
+        return StepOneMixer();
       }
     }
   });
@@ -359,8 +352,9 @@ function StepThreeHelix() {
       if (status == "success") {
         return StepFourHelix();
       } else {
-        ToggleShow("loading-helix");
-        ToggleShow("follows-helix");
+        document.getElementById("loading-helix").style.display = "none";
+        document.getElementById("follows-helix").style.display = "block";
+        return StepOneMixer();
       }
     }
   });
@@ -389,8 +383,9 @@ function StepFourHelix() {
       if (status == "success" ) {
         return StepFiveHelix();
       } else {
-        ToggleShow("loading-helix");
-        ToggleShow("follows-helix");
+        document.getElementById("loading-helix").style.display = "none";
+        document.getElementById("follows-helix").style.display = "block";
+        return StepOneMixer();
       }
     }
   });
@@ -421,8 +416,9 @@ function StepFiveHelix() {
   if (countHelix > 0 && userIndexTwitch < 20) {
     return StepTwoHelix(false, false, false);
   } else {
-    ToggleShow("loading-helix");
-    ToggleShow("follows-helix");
+    document.getElementById("loading-helix").style.display = "none";
+    document.getElementById("follows-helix").style.display = "block";
+    return StepOneMixer();
   }
 }
 
@@ -441,7 +437,7 @@ function StepOneMixer() {
     },
     complete: function(jqxhr, status) {
       if (status == "success") {
-        StepTwoMixer(true, false, false);
+        return StepTwoMixer(true, false, false);
       }
     }
   });
@@ -458,9 +454,6 @@ function StepTwoMixer(init, destroy, update) {
       tableM.setAttribute("id", "follow-table-mixer");
       document.getElementById("follows-mixer").appendChild(tableM);
     }
-    if (!update) {
-      ToggleShow("loading-mixer");
-    }
   }
 
   if (destroy) {
@@ -472,10 +465,8 @@ function StepTwoMixer(init, destroy, update) {
     document.getElementById("follows-mixer").appendChild(tableM);
   }
 
-  if (update) {
-    ToggleShow("loading-mixer");
-    ToggleShow("follows-mixer");
-  }
+  document.getElementById("follows-mixer").style.display = "none";
+  document.getElementById("loading-mixer").style.display = "block";
 
   $.ajax({
     type: "GET",
@@ -496,7 +487,7 @@ function StepTwoMixer(init, destroy, update) {
       pageMixer++;
 
       for (ii = 0 ; ii < dataFollowsMixer.length ; ii++) {
-        if (dataFollowsMixer[ii].online == true) {
+        if (dataFollowsMixer[ii].online == true && userIndexMixer < 20) {
           rowM = document.createElement("div");
           rowM.classList.add("divrow");
           tableM.appendChild(rowM);
@@ -521,19 +512,19 @@ function StepTwoMixer(init, destroy, update) {
         if (countMixer > 0 && userIndexMixer < 20) {
           return StepTwoMixer(false, false, false);
         } else {
-          ToggleShow("loading-mixer");
-          ToggleShow("follows-mixer");
+          document.getElementById("loading-mixer").style.display = "none";
+          document.getElementById("follows-mixer").style.display = "block";
         }
       } else {
-        ToggleShow("loading-mixer");
-        ToggleShow("follows-mixer");
+        document.getElementById("loading-mixer").style.display = "none";
+        document.getElementById("follows-mixer").style.display = "block";
       }
     }
   });
 }
 
 function UpdateFollowListMixer() {
-  StepTwoMixer(true, true, true);
+  return StepTwoMixer(true, true, true);
 }
 
 
