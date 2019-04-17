@@ -2,6 +2,8 @@ var g_userName;
 var hasCountTwitch, hasCountMixer;
 var countHelix, countMixer;
 var pageHelix, pageMixer;
+var hasUserDataTwitch = false;
+var hasUserDataMixer = false;
 var userIndexTwitch, userIndexMixer;
 var urlUsersTwitch, urlStreamsTwitch;
 var dataUserTwitch, dataUsersTwitch;
@@ -124,6 +126,7 @@ function StepOneHelix() {
     success: function(data, status, jqxhr) {
       //console.log(data);
       dataUserTwitch = data;
+      hasUserDataTwitch = true;
       //reset = parseInt(jqxhr.getResponseHeader("Ratelimit-Remaining"));
       //alert(reset);
     },
@@ -286,7 +289,7 @@ function StepFiveHelix() {
 }
 
 function UpdateFollowListHelix() {
-  return StepTwoHelix(true, true);
+  if (hasUserDataTwitch) return StepTwoHelix(true, true);
 }
 
 function StepOneMixer() {
@@ -297,6 +300,7 @@ function StepOneMixer() {
     success: function(data, status, jqxhr) {
       //console.log(data);
       dataUserMixer = data;
+      hasUserDataMixer = true;
     },
     complete: function(jqxhr, status) {
       if (status == "success") {
@@ -387,31 +391,5 @@ function StepTwoMixer(init, destroy) {
 }
 
 function UpdateFollowListMixer() {
-  return StepTwoMixer(true, true);
+  if (hasUserDataMixer) return StepTwoMixer(true, true);
 }
-
-
-/*
-window.onclick = function(event) {
-  if (!event.target.matches('.resoButton')) {
-    var resoDropdown = document.getElementById("resoDropdown");
-    if (resoDropdown.classList.contains('show')) {
-        resoDropdown.classList.remove('show');
-    }
-  }
-}
-*/
-
-/*
-function UpdateResetForm() {
-  if (reset) {
-    if (document.getElementById("reset-form").innerHTML !== reset) {
-      document.getElementById("reset-form").innerHTML = reset;
-    }
-  } else if (document.getElementById("reset-form").innerHTML != "broken") {
-    document.getElementById("reset-form").innerHTML = "broken";
-  }
-}
-
-var x = setInterval(UpdateResetForm(), 1000);
-*/

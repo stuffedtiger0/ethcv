@@ -13,8 +13,6 @@ p                   { margin: 0; }
 iframe              { display: block; border: none; }
 table               { border-collapse: collapse; border: 0px solid red; }
 td                  { padding: 0px; }
-.page-table         { display: table; height: 100%; }
-.page-cell          { display: table-cell; height: 100%; vertical-align: middle; }
 .divtable           { display: table; }
 .divrow             { display: table-row; }
 .divcell            { display: table-cell; vertical-align: middle; }
@@ -23,8 +21,8 @@ td                  { padding: 0px; }
 .input-button       { width: 150px; }
 .spanlink           { cursor: pointer; }
 .loading            { display: none; }
-#left-follows       { width: 250px; overflow-x: hidden; text-align: center }
-#right-content      { text-align: center; }
+#page               { text-align: center; display: flex; align-items: center; justify-content: flex-start; height: 100%; }
+#page-left          { min-width: 250px; max-width: 250px; overflow: hidden; }
 #follow-table-helix { width: 100%; }
 #follow-table-mixer { width: 100%; }
 
@@ -40,81 +38,64 @@ td                  { padding: 0px; }
 
   </head>
   <body onload="AssignButtons();ChangeResolution('init');">
-<!-- PAGE TABLE -->
-    <div class="page-table">
-<!-- PAGE CELL -->
-      <div class="page-cell">
-<!-- ALIGNMENT TABLE -->
-        <div class="divtable">
-<!-- LEFT BAR -->
-          <div class="divcell">
-            <div class="divtable" id="left-follows">
-              <div class="divrow">
-                <div class="divcell">
-                  <p><span id="reset-form"></span></p>
-                </div>
-              </div>
-              <div class="divrow">
-                <div class="divcell">
-                  <p class="title"><span class="spanlink" title="click to update twitch list" onclick="UpdateFollowListHelix()">[twitch]</span></p>
-                  <p class="loading" id="loading-helix">LOADING...</p>
-                  <div id="follows-helix"></div>
-                  <p class="title"><span class="spanlink" title="click to update mixer list" onclick="UpdateFollowListMixer()">[mixer]</span></p>
-                  <p class="loading" id="loading-mixer">LOADING...</p>
-                  <div id="follows-mixer"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<!-- CONTENT -->
-          <div class="divcell">
-            <table id="right-content">
-              <tr>
-                <td colspan="2">
-                  <table style="display: inline-table;">
-                    <tr>
-                      <td class="selector-section-td">
-                        <div class="selector-section-div">
-                          <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Player/Chat Dimensions</button>
-                          <div class="dropdown-content" id="resoDropdown">
-                            <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
-                            <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
-                            <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="selector-section-td">
-                        <div class="selector-section-div">
-                          <button class="select-button" id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
-                          <div class="dropdown-content" id="userDropdown">
-                            <span><input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value)" /></span>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="selector-section-td">
-                        <div class="selector-section-div">
-                          <button class="select-button" id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
-                          <div class="dropdown-content" id="channelDropdown">
-                            <span><input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch')" /></span>
-                            <span><input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer')" /></span>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td style="background-color: #F1F1F1; color: #262626;">
-                  <iframe id="frame-player" src="about:blank" allowfullscreen="true" width="16" height="9"></iframe>
-                </td>
-                <td style="background-color: #F1F1F1;">
-                  <iframe id="frame-chat" src="about:blank" width="340" height="9"></iframe>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
+
+    <div id="page">
+<!-- PAGE LEFT -->
+      <div id="page-left">
+        <p class="title"><span class="spanlink" title="click to update twitch list" onclick="UpdateFollowListHelix()">[twitch]</span></p>
+        <p class="loading" id="loading-helix">LOADING...</p>
+        <div id="follows-helix"></div>
+        <p class="title"><span class="spanlink" title="click to update mixer list" onclick="UpdateFollowListMixer()">[mixer]</span></p>
+        <p class="loading" id="loading-mixer">LOADING...</p>
+        <div id="follows-mixer"></div>
+      </div>
+<!-- PAGE RIGHT -->
+      <div>
+        <table>
+          <tr>
+            <td colspan="2">
+              <table style="display: inline-table;">
+                <tr>
+                  <td class="selector-section-td">
+                    <div class="selector-section-div">
+                      <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Player/Chat Dimensions</button>
+                      <div class="dropdown-content" id="resoDropdown">
+                        <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
+                        <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
+                        <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="selector-section-td">
+                    <div class="selector-section-div">
+                      <button class="select-button" id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
+                      <div class="dropdown-content" id="userDropdown">
+                        <span><input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value)" /></span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="selector-section-td">
+                    <div class="selector-section-div">
+                      <button class="select-button" id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
+                      <div class="dropdown-content" id="channelDropdown">
+                        <span><input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch')" /></span>
+                        <span><input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer')" /></span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #F1F1F1; color: #262626;">
+              <iframe id="frame-player" src="about:blank" width="16" height="9" allowfullscreen="true"></iframe>
+            </td>
+            <td style="background-color: #F1F1F1;">
+              <iframe id="frame-chat" src="about:blank" width="340" height="9"></iframe>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </body>
