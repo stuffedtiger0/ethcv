@@ -2,33 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <title>Ethereal Channel Viewer</title>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="load.js"></script>
-    <title>Ethereal Channel Viewer</title>
 
     <style>
-html                { height: 100%; }
-body                { height: 100%; margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; }
-p                   { margin: 0; }
-iframe              { display: block; border: none; }
-table               { border-collapse: collapse; border: 0px solid red; }
-td                  { padding: 0px; }
-.divtable           { display: table; }
-.divrow             { display: table-row; }
-.divcell            { display: table-cell; vertical-align: middle; }
-.title              { font-weight: bold; }
-.input-text         { width: 125px; }
-.input-button       { width: 150px; }
-.spanlink           { cursor: pointer; }
-.loading            { display: none; }
-#page               { text-align: center; display: flex; align-items: center; justify-content: flex-start; height: 100%; }
-#page-left          { min-width: 250px; max-width: 250px; overflow: hidden; }
-#follow-table-helix { width: 100%; }
-#follow-table-mixer { width: 100%; }
+body   { margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; }
+p      { margin: 0; }
+iframe { display: block; border: none; }
+table  { border-collapse: collapse; border: 0px solid red; }
+td     { padding: 0px; }
+
+.title        { font-weight: bold; }
+.input-text   { width: 125px; }
+.input-button { width: 150px; }
+.spanlink     { cursor: pointer; }
+.loading      { display: none; }
+
+#page               { display: flex; align-items: center; justify-content: flex-start; height: 100vh; text-align: center; }
+#page-left          { width: 250px; min-width: 250px; max-width: 250px; overflow: hidden; }
+#follow-table-helix { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#follow-table-mixer { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
 .selector-section-td         { width: 300px; }
 .selector-section-div        { width: inherit; text-align: center; }
-.select-button               { background-color: #F1F1F1; color: #262626; padding: 10px; border: 2px solid black; cursor: pointer; }
+.select-button               { background-color: #F1F1F1; color: #262626; padding: 10px; border: 0px solid black; cursor: pointer; }
 .dropdown-content            { display: none; position: absolute; width: inherit; background-color: #262626; color: #F1F1F1; overflow: hidden; z-index: 1; }
 .dropdown-content span       { display: block; padding: 6px 0px; cursor: pointer; }
 .dropdown-content span:hover { background-color: #F1F1F1; color: #262626; }
