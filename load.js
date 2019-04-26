@@ -266,7 +266,7 @@ function StepFiveHelix() {
       spanT.index = dataUsersTwitch.data[ii].login;
       spanT.innerHTML = dataUsersTwitch.data[ii].login + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)"; // display names from twitch IDs
       spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
-      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch") }; // create links for fast channel changes
+      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); }; // create links for fast channel changes
       document.getElementById("helix-p-" + userIndexTwitch).appendChild(spanT);
       userIndexTwitch++;
     }
@@ -352,7 +352,7 @@ function StepTwoMixer(init, destroy) {
           spanM.index = dataFollowsMixer[ii].token;
           spanM.innerHTML = dataFollowsMixer[ii].token + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)"; // display names from mixer IDs
           spanM.title = dataFollowsMixer[ii].name;
-          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer") }; // create links for fast channel changes
+          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); }; // create links for fast channel changes
           document.getElementById("mixer-p-" + userIndexMixer).appendChild(spanM);
           userIndexMixer++;
         }
