@@ -13,16 +13,15 @@ iframe { display: block; border: none; }
 table  { border-collapse: collapse; border: 0px solid red; }
 td     { padding: 0px; }
 
-.title        { font-weight: bold; }
-.input-text   { width: 125px; }
-.input-button { width: 150px; }
-.spanlink     { cursor: pointer; }
-.loading      { display: none; }
+.title      { font-weight: bold; }
+.text-input { width: 202px; }
+.spanlink   { cursor: pointer; }
+.loading    { display: none; }
 
 #page               { display: flex; align-items: center; justify-content: flex-start; height: 100vh; text-align: center; }
-#page-left          { width: 250px; min-width: 250px; max-width: 250px; overflow: hidden; }
-#follow-table-helix { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-#follow-table-mixer { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#page-left          { width: 250px; min-width: 250px; overflow: hidden; }
+#follow-table-helix { display: flex; flex-direction: column; flex: 0 100%; align-items: center; justify-content: center; }
+#follow-table-mixer { display: flex; flex-direction: column; flex: 0 100%; align-items: center; justify-content: center; }
 
 .selector-section-td         { width: 300px; }
 .selector-section-div        { width: inherit; text-align: center; }
@@ -36,7 +35,7 @@ td     { padding: 0px; }
 
   </head>
   <body onload="AssignButtons();ChangeResolution('init');">
-
+<!-- PAGE -->
     <div id="page">
 <!-- PAGE LEFT -->
       <div id="page-left">
@@ -56,7 +55,7 @@ td     { padding: 0px; }
                 <tr>
                   <td class="selector-section-td">
                     <div class="selector-section-div">
-                      <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Player/Chat Dimensions</button>
+                      <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
                       <div class="dropdown-content" id="resoDropdown">
                         <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
                         <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
@@ -68,7 +67,7 @@ td     { padding: 0px; }
                     <div class="selector-section-div">
                       <button class="select-button" id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
                       <div class="dropdown-content" id="userDropdown">
-                        <span><input class="input-text" id="input-user" type="text" /><input class="input-button" id="button-user" type="button" value="Load User" onclick="LoadUser(document.getElementById('input-user').value)" /></span>
+                        <span><input id="input-user" style="width: 202px;" type="text" placeholder="Type a username and press Enter" /></span>
                       </div>
                     </div>
                   </td>
@@ -76,8 +75,8 @@ td     { padding: 0px; }
                     <div class="selector-section-div">
                       <button class="select-button" id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
                       <div class="dropdown-content" id="channelDropdown">
-                        <span><input class="input-text" id="input-channel-twitch" type="text" /><input class="input-button" id="button-channel-twitch" type="button" value="Load Twitch Channel" onclick="LoadChannel(document.getElementById('input-channel-twitch').value, 'twitch')" /></span>
-                        <span><input class="input-text" id="input-channel-mixer" type="text" /><input class="input-button" id="button-channel-mixer" type="button" value="Load Mixer Channel" onclick="LoadChannel(document.getElementById('input-channel-mixer').value, 'mixer')" /></span>
+                        <span><input id="input-channel-twitch" style="width: 252px;" type="text" placeholder="Type twitch channel name and press Enter" /></span>
+                        <span><input id="input-channel-mixer" style="width: 252px;" type="text" placeholder="Type mixer channel name and press Enter" /></span>
                       </div>
                     </div>
                   </td>

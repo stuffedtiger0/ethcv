@@ -12,26 +12,26 @@ var userObjT = {};
 //var reset;
 
 function AssignButtons() {
-  var element;
-  element = document.getElementById("input-channel-twitch");
-  element.addEventListener("keyup", function(event) {
+  var ele;
+  ele = document.getElementById("input-channel-twitch");
+  ele.addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
-      document.getElementById("button-channel-twitch").click();
+      LoadChannel(document.getElementById("input-channel-twitch").value, "twitch");
     }
   });
-  element = document.getElementById("input-channel-mixer");
-  element.addEventListener("keyup", function(event) {
+  ele = document.getElementById("input-channel-mixer");
+  ele.addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
-      document.getElementById("button-channel-mixer").click();
+      LoadChannel(document.getElementById("input-channel-mixer").value, "mixer");
     }
   });
-  element = document.getElementById("input-user");
-  element.addEventListener("keyup", function(event) {
+  ele = document.getElementById("input-user");
+  ele.addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
-      document.getElementById("button-user").click();
+      LoadUser(document.getElementById("input-user").value);
     }
   });
 }
@@ -45,7 +45,6 @@ function ChangeResolution(newReso) {
   var date = new Date();
   date.setTime(date.getTime()+(30*24*60*60*1000));
   var expires = "; expires="+date.toGMTString();
-
   if (newReso == "init") {
     var cname = "reso=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -89,11 +88,11 @@ function LoadChannel(channelName, service) {
   } else {
     document.getElementById("current-channel").innerHTML = channelName;
     if (service == "twitch") {
-      document.getElementById("frame-player").setAttribute("src", "https://player.twitch.tv/?channel="+channelName);
+      document.getElementById("frame-player").setAttribute("src", "https://player.twitch.tv/?channel="+channelName+"&muted=false");
       document.getElementById("frame-chat").setAttribute("src", "https://www.twitch.tv/embed/"+channelName+"/chat");
       document.getElementById("frame-chat").setAttribute("width", "340");
     } else {
-      document.getElementById("frame-player").setAttribute("src", "https://mixer.com/embed/player/"+channelName);
+      document.getElementById("frame-player").setAttribute("src", "https://mixer.com/embed/player/"+channelName+"&muted=false");
       document.getElementById("frame-chat").setAttribute("src", "https://mixer.com/embed/chat/"+channelName);
       document.getElementById("frame-chat").setAttribute("width", "350");
     }
@@ -102,10 +101,10 @@ function LoadChannel(channelName, service) {
 
 function LoadUser(userName) {
   if (userDropdown.classList.contains("show")) userDropdown.classList.remove("show");
-  var oldTableT = document.getElementById("follow-table-helix");
-  if (oldTableT) oldTableT.parentNode.removeChild(oldTableT);
-  var oldTableM = document.getElementById("follow-table-mixer");
-  if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
+  var oldTable = document.getElementById("follow-table-helix");
+  if (oldTable) oldTable.parentNode.removeChild(oldTable);
+  oldTable = document.getElementById("follow-table-mixer");
+  if (oldTable) oldTable.parentNode.removeChild(oldTable);
   if (userName == "") {
     document.getElementById("current-user").innerHTML = "No User Loaded";
   } else {
@@ -125,8 +124,6 @@ function StepOneHelix() {
       //console.log(data);
       dataUserTwitch = data;
       hasUserDataTwitch = true;
-      //reset = parseInt(jqxhr.getResponseHeader("Ratelimit-Remaining"));
-      //alert(reset);
     },
     complete: function(jqxhr, status) {
       if (status == "success") {
@@ -147,7 +144,6 @@ function StepTwoHelix(init, destroy) {
       document.getElementById("follows-helix").appendChild(tableT);
     }
   }
-
   if (destroy) {
     let oldTableT = document.getElementById("follow-table-helix");
     if (oldTableT) oldTableT.parentNode.removeChild(oldTableT);
@@ -155,10 +151,8 @@ function StepTwoHelix(init, destroy) {
     tableT.setAttribute("id", "follow-table-helix");
     document.getElementById("follows-helix").appendChild(tableT);
   }
-
   document.getElementById("follows-helix").style.display = "none";
   document.getElementById("loading-helix").style.display = "block";
-
   $.ajax({
     type: "GET",
     url: "https://api.twitch.tv/helix/users/follows?from_id=" + dataUserTwitch.data[0].id + "&first=100&after=" + pageHelix,
@@ -166,7 +160,6 @@ function StepTwoHelix(init, destroy) {
     success: function(data, status, jqxhr) {
       //console.log(data);
       var dataFollowsTwitch = data;
-      //reset = parseInt(jqxhr.getResponseHeader("Ratelimit-Remaining"));
       if (!hasCountTwitch) {
         countHelix = parseInt(dataFollowsTwitch.total);
         countHelix -= dataFollowsTwitch.data.length;
@@ -208,7 +201,6 @@ function StepThreeHelix() {
     success: function(data, status, jqxhr) {
       //console.log(data);
       dataUsersTwitch = data;
-      //reset = parseInt(jqxhr.getResponseHeader("Ratelimit-Remaining"));
       userObjT.user = [];
       for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
         userObjT.user[dataUsersTwitch.data[ii].login] = { id: dataUsersTwitch.data[ii].id, viewers: "", live: "", title: "" };
@@ -233,7 +225,6 @@ function StepFourHelix() {
     success: function(data, status, jqxhr) {
       //console.log(data);
       var dataStreamsTwitch = data;
-      //reset = parseInt(jqxhr.getResponseHeader("Ratelimit-Remaining"));
       for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
         for (let jj = 0 ; jj < dataStreamsTwitch.data.length ; jj++) {
           if (userObjT.user[dataUsersTwitch.data[ii].login].id == dataStreamsTwitch.data[jj].user_id) {
@@ -256,18 +247,16 @@ function StepFourHelix() {
 }
 
 function StepFiveHelix() {
+  var spanT;
   for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
     if (userObjT.user[dataUsersTwitch.data[ii].login].live == "live" && userIndexTwitch < 20) {
-      let pT = document.createElement("p");
-      pT.setAttribute("id", "helix-p-" + userIndexTwitch);
-      document.getElementById("follow-table-helix").appendChild(pT);
-      let spanT = document.createElement("span");
+      spanT = document.createElement("span");
       spanT.classList.add("spanlink");
       spanT.index = dataUsersTwitch.data[ii].login;
-      spanT.innerHTML = dataUsersTwitch.data[ii].login + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)"; // display names from twitch IDs
+      spanT.innerHTML = dataUsersTwitch.data[ii].login + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)";
       spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
-      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); }; // create links for fast channel changes
-      document.getElementById("helix-p-" + userIndexTwitch).appendChild(spanT);
+      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); };
+      document.getElementById("follow-table-helix").appendChild(spanT);
       userIndexTwitch++;
     }
   }
@@ -312,7 +301,6 @@ function StepTwoMixer(init, destroy) {
       document.getElementById("follows-mixer").appendChild(tableM);
     }
   }
-
   if (destroy) {
     let oldTableM = document.getElementById("follow-table-mixer");
     if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
@@ -320,10 +308,8 @@ function StepTwoMixer(init, destroy) {
     tableM.setAttribute("id", "follow-table-mixer");
     document.getElementById("follows-mixer").appendChild(tableM);
   }
-
   document.getElementById("follows-mixer").style.display = "none";
   document.getElementById("loading-mixer").style.display = "block";
-
   $.ajax({
     type: "GET",
     url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=100&page=" + pageMixer,
@@ -331,7 +317,6 @@ function StepTwoMixer(init, destroy) {
     success: function(data, status, jqxhr) {
       //console.log(data);
       var dataFollowsMixer = data;
-
       if (!hasCountMixer) {
         countMixer = jqxhr.getResponseHeader("x-total-count");
         countMixer -= dataFollowsMixer.length;
@@ -339,21 +324,17 @@ function StepTwoMixer(init, destroy) {
       } else {
         countMixer -= dataFollowsMixer.length;
       }
-
       pageMixer++;
-
+      var spanM;
       for (let ii = 0 ; ii < dataFollowsMixer.length ; ii++) {
         if (dataFollowsMixer[ii].online == true && userIndexMixer < 20) {
-          let pM = document.createElement("p");
-          pM.setAttribute("id", "mixer-p-" + userIndexMixer);
-          document.getElementById("follow-table-mixer").appendChild(pM);
-          let spanM = document.createElement("span");
+          spanM = document.createElement("span");
           spanM.classList.add("spanlink");
           spanM.index = dataFollowsMixer[ii].token;
-          spanM.innerHTML = dataFollowsMixer[ii].token + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)"; // display names from mixer IDs
+          spanM.innerHTML = dataFollowsMixer[ii].token + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)";
           spanM.title = dataFollowsMixer[ii].name;
-          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); }; // create links for fast channel changes
-          document.getElementById("mixer-p-" + userIndexMixer).appendChild(spanM);
+          spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); };
+          document.getElementById("follow-table-mixer").appendChild(spanM);
           userIndexMixer++;
         }
       }
