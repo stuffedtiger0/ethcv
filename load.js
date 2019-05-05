@@ -9,7 +9,6 @@ var urlUsersTwitch, urlStreamsTwitch;
 var dataUserTwitch, dataUsersTwitch;
 var dataUserMixer;
 var userObjT = {};
-//var reset;
 
 function AssignButtons() {
   var ele;
@@ -253,7 +252,7 @@ function StepFiveHelix() {
       spanT = document.createElement("span");
       spanT.classList.add("spanlink");
       spanT.index = dataUsersTwitch.data[ii].login;
-      spanT.innerHTML = dataUsersTwitch.data[ii].login + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)";
+      spanT.innerHTML = dataUsersTwitch.data[ii].display_name + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)";
       spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
       spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); };
       document.getElementById("follow-table-helix").appendChild(spanT);
@@ -330,8 +329,8 @@ function StepTwoMixer(init, destroy) {
         if (dataFollowsMixer[ii].online == true && userIndexMixer < 20) {
           spanM = document.createElement("span");
           spanM.classList.add("spanlink");
-          spanM.index = dataFollowsMixer[ii].token;
-          spanM.innerHTML = dataFollowsMixer[ii].token + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)";
+          spanM.index = dataFollowsMixer[ii].user.username;
+          spanM.innerHTML = dataFollowsMixer[ii].user.username + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)";
           spanM.title = dataFollowsMixer[ii].name;
           spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); };
           document.getElementById("follow-table-mixer").appendChild(spanM);
