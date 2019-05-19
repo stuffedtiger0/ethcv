@@ -10,16 +10,15 @@
 body   { margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; text-align: center; }
 iframe { border: none; display: block; }
 
-.title      { font-weight: bold; }
-.spanlink   { cursor: pointer; }
-.loading    { display: none; }
+.title          { font-weight: bold; }
+.spanlink       { cursor: pointer; }
+.followtablediv { width: 100%; }
+.loading        { display: none; }
 
-#page               { display: flex; align-items: center; height: 100vh; }
-#page-top           { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; z-index: 1; }
-#page-left          { width: 250px; min-width: 250px; overflow: hidden; }
-#page-right         { display: flex; background-color: #F1F1F1; overflow: hidden; }
-#follow-table-helix { display: flex; flex-direction: column; justify-content: center; }
-#follow-table-mixer { display: flex; flex-direction: column; justify-content: center; }
+#page       { display: flex; align-items: center; height: 100vh; }
+#page-top   { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; z-index: 1; }
+#page-left  { width: 250px; min-width: 250px; overflow: hidden; }
+#page-right { display: flex; background-color: #F1F1F1; overflow: hidden; }
 
 .selector-section-div        { display: inline-block; width: 260px; }
 .select-button               { background-color: #F1F1F1; color: #262626; padding: 10px; border: 1px solid black; cursor: pointer; }
@@ -31,7 +30,7 @@ iframe { border: none; display: block; }
     </style>
 
   </head>
-  <body onload="AssignButtons();ChangeResolution('init');">
+  <body onload="AddListeners();ChangeResolution('init');">
 <!-- PAGE -->
     <div id="page">
 <!-- PAGE TOP -->

@@ -10,24 +10,20 @@ var dataUserTwitch, dataUsersTwitch;
 var dataUserMixer;
 var userObjT = {};
 
-function AssignButtons() {
-  var ele;
-  ele = document.getElementById("input-channel-twitch");
-  ele.addEventListener("keyup", function(event) {
+function AddListeners() {
+  document.getElementById("input-channel-twitch").addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
       LoadChannel(document.getElementById("input-channel-twitch").value, "twitch");
     }
   });
-  ele = document.getElementById("input-channel-mixer");
-  ele.addEventListener("keyup", function(event) {
+  document.getElementById("input-channel-mixer").addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
       LoadChannel(document.getElementById("input-channel-mixer").value, "mixer");
     }
   });
-  ele = document.getElementById("input-user");
-  ele.addEventListener("keyup", function(event) {
+  document.getElementById("input-user").addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
       LoadUser(document.getElementById("input-user").value);
@@ -246,16 +242,20 @@ function StepFourHelix() {
 }
 
 function StepFiveHelix() {
+  var divT;
   var spanT;
   for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
     if (userObjT.user[dataUsersTwitch.data[ii].login].live == "live" && userIndexTwitch < 20) {
+      divT = document.createElement("div");
+      divT.classList.add("followtablediv");
+      document.getElementById("follow-table-helix").appendChild(divT);
       spanT = document.createElement("span");
       spanT.classList.add("spanlink");
       spanT.index = dataUsersTwitch.data[ii].login;
       spanT.innerHTML = dataUsersTwitch.data[ii].display_name + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)";
       spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
       spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); };
-      document.getElementById("follow-table-helix").appendChild(spanT);
+      divT.appendChild(spanT);
       userIndexTwitch++;
     }
   }
@@ -324,16 +324,20 @@ function StepTwoMixer(init, destroy) {
         countMixer -= dataFollowsMixer.length;
       }
       pageMixer++;
+      var divM;
       var spanM;
       for (let ii = 0 ; ii < dataFollowsMixer.length ; ii++) {
         if (dataFollowsMixer[ii].online == true && userIndexMixer < 20) {
+          divM = document.createElement("div");
+          divM.classList.add("followtablediv");
+          document.getElementById("follow-table-mixer").appendChild(divM);
           spanM = document.createElement("span");
           spanM.classList.add("spanlink");
           spanM.index = dataFollowsMixer[ii].user.username;
           spanM.innerHTML = dataFollowsMixer[ii].user.username + " (" + dataFollowsMixer[ii].viewersCurrent + " viewers)";
           spanM.title = dataFollowsMixer[ii].name;
           spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); };
-          document.getElementById("follow-table-mixer").appendChild(spanM);
+          divM.appendChild(spanM);
           userIndexMixer++;
         }
       }
