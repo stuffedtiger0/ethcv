@@ -5,10 +5,8 @@ var pageHelix, pageMixer;
 var hasUserDataTwitch = false;
 var hasUserDataMixer = false;
 var userIndexTwitch, userIndexMixer;
-var urlUsersTwitch, urlStreamsTwitch;
-var dataUserTwitch, dataUsersTwitch;
-var dataUserMixer;
-var userObjT = {};
+var urlStreamsTwitch;
+var dataUserTwitch, dataUserMixer;
 
 function AddListeners() {
   document.getElementById("input-channel-twitch").addEventListener("keyup", function(event) {
@@ -121,7 +119,11 @@ function StepOneHelix() {
       hasUserDataTwitch = true;
     },
     complete: function(jqxhr, status) {
-      if (status == "success") {
+      if (!dataUserTwitch.data[0]) {
+        document.getElementById("invalid-username-helix").classList.add("show");
+        hasUserDataTwitch = false;
+      } else if (status == "success") {
+        document.getElementById("invalid-username-helix").classList.remove("show");
         return StepTwoHelix(true, false);
       }
     }
@@ -146,34 +148,30 @@ function StepTwoHelix(init, destroy) {
     tableT.setAttribute("id", "follow-table-helix");
     document.getElementById("follows-helix").appendChild(tableT);
   }
-  document.getElementById("follows-helix").style.display = "none";
-  document.getElementById("loading-helix").style.display = "block";
+  document.getElementById("follows-helix").classList.remove("show");
+  document.getElementById("loading-helix").classList.add("show");
   $.ajax({
     type: "GET",
     url: "https://api.twitch.tv/helix/users/follows?from_id=" + dataUserTwitch.data[0].id + "&first=100&after=" + pageHelix,
     headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
     success: function(data, status, jqxhr) {
       //console.log(data);
-      var dataFollowsTwitch = data;
       if (!hasCountTwitch) {
-        countHelix = parseInt(dataFollowsTwitch.total);
-        countHelix -= dataFollowsTwitch.data.length;
+        countHelix = parseInt(data.total);
+        countHelix -= data.data.length;
         hasCountTwitch = true;
       } else {
-        countHelix -= dataFollowsTwitch.data.length;
+        countHelix -= data.data.length;
       }
-      pageHelix = dataFollowsTwitch.pagination.cursor;
+      pageHelix = data.pagination.cursor;
       let isFirstId = true;
-      urlUsersTwitch = "https://api.twitch.tv/helix/users";
       urlStreamsTwitch = "https://api.twitch.tv/helix/streams";
-      for (let ii = 0 ; ii < dataFollowsTwitch.data.length ; ii++) {
+      for (let ii = 0 ; ii < data.data.length ; ii++) {
         if (isFirstId) { // with first id add ? instead of &
-          urlUsersTwitch = urlUsersTwitch + "?id=" + dataFollowsTwitch.data[ii].to_id;
-          urlStreamsTwitch = urlStreamsTwitch + "?user_id=" + dataFollowsTwitch.data[ii].to_id;
+          urlStreamsTwitch = urlStreamsTwitch + "?user_id=" + data.data[ii].to_id;
           isFirstId = false;
         } else {
-          urlUsersTwitch = urlUsersTwitch + "&id=" + dataFollowsTwitch.data[ii].to_id;
-          urlStreamsTwitch = urlStreamsTwitch + "&user_id=" + dataFollowsTwitch.data[ii].to_id;
+          urlStreamsTwitch = urlStreamsTwitch + "&user_id=" + data.data[ii].to_id;
         }
       }
     },
@@ -181,8 +179,8 @@ function StepTwoHelix(init, destroy) {
       if (status == "success") {
         return StepThreeHelix();
       } else {
-        document.getElementById("loading-helix").style.display = "none";
-        document.getElementById("follows-helix").style.display = "block";
+        document.getElementById("loading-helix").classList.remove("show");
+        document.getElementById("follows-helix").classList.add("show");
       }
     }
   });
@@ -191,80 +189,44 @@ function StepTwoHelix(init, destroy) {
 function StepThreeHelix() {
   $.ajax({
     type: "GET",
-    url: urlUsersTwitch,
-    headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
-    success: function(data, status, jqxhr) {
-      //console.log(data);
-      dataUsersTwitch = data;
-      userObjT.user = [];
-      for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
-        userObjT.user[dataUsersTwitch.data[ii].login] = { id: dataUsersTwitch.data[ii].id, viewers: "", live: "", title: "" };
-      }
-    },
-    complete: function(jqxhr, status) {
-      if (status == "success") {
-        return StepFourHelix();
-      } else {
-        document.getElementById("loading-helix").style.display = "none";
-        document.getElementById("follows-helix").style.display = "block";
-      }
-    }
-  });
-}
-
-function StepFourHelix() {
-  $.ajax({
-    type: "GET",
     url: urlStreamsTwitch,
     headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
     success: function(data, status, jqxhr) {
       //console.log(data);
-      var dataStreamsTwitch = data;
-      for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
-        for (let jj = 0 ; jj < dataStreamsTwitch.data.length ; jj++) {
-          if (userObjT.user[dataUsersTwitch.data[ii].login].id == dataStreamsTwitch.data[jj].user_id) {
-            userObjT.user[dataUsersTwitch.data[ii].login].viewers = dataStreamsTwitch.data[jj].viewer_count;
-            userObjT.user[dataUsersTwitch.data[ii].login].live = dataStreamsTwitch.data[jj].type;
-            userObjT.user[dataUsersTwitch.data[ii].login].title = dataStreamsTwitch.data[jj].title;
+      if (data.data.length > 0) {
+        var divT;
+        var spanT;
+        for (let ii = 0 ; ii < data.data.length ; ii++) {
+          if (data.data[ii].type == "live" && userIndexTwitch < 20) {
+            divT = document.createElement("div");
+            divT.classList.add("followtablediv");
+            document.getElementById("follow-table-helix").appendChild(divT);
+            spanT = document.createElement("span");
+            spanT.classList.add("spanlink");
+            spanT.index = data.data[ii].user_name;
+            spanT.innerHTML = data.data[ii].user_name + " (" + data.data[ii].viewer_count + " viewers)";
+            spanT.title = data.data[ii].title;
+            spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); };
+            divT.appendChild(spanT);
+            userIndexTwitch++;
           }
         }
       }
     },
     complete: function(jqxhr, status) {
-      if (status == "success" ) {
-        return StepFiveHelix();
+      if (status == "success") {
+        if (countHelix > 0 && userIndexTwitch < 20) {
+          return StepTwoHelix(false, false);
+        } else {
+          document.getElementById("loading-helix").classList.remove("show");
+          document.getElementById("follows-helix").classList.add("show");
+        }
       } else {
-        document.getElementById("loading-helix").style.display = "none";
-        document.getElementById("follows-helix").style.display = "block";
+        document.getElementById("loading-helix").classList.remove("show");
+        document.getElementById("follows-helix").classList.add("show");
       }
     }
   });
-}
-
-function StepFiveHelix() {
-  var divT;
-  var spanT;
-  for (let ii = 0 ; ii < dataUsersTwitch.data.length ; ii++) {
-    if (userObjT.user[dataUsersTwitch.data[ii].login].live == "live" && userIndexTwitch < 20) {
-      divT = document.createElement("div");
-      divT.classList.add("followtablediv");
-      document.getElementById("follow-table-helix").appendChild(divT);
-      spanT = document.createElement("span");
-      spanT.classList.add("spanlink");
-      spanT.index = dataUsersTwitch.data[ii].login;
-      spanT.innerHTML = dataUsersTwitch.data[ii].display_name + " (" + userObjT.user[dataUsersTwitch.data[ii].login].viewers + " viewers)";
-      spanT.title = userObjT.user[dataUsersTwitch.data[ii].login].title;
-      spanT.onclick = function(event) { LoadChannel(event.target.index, "twitch"); };
-      divT.appendChild(spanT);
-      userIndexTwitch++;
-    }
-  }
-  if (countHelix > 0 && userIndexTwitch < 20) {
-    return StepTwoHelix(false, false);
-  } else {
-    document.getElementById("loading-helix").style.display = "none";
-    document.getElementById("follows-helix").style.display = "block";
-  }
 }
 
 function UpdateFollowListHelix() {
@@ -307,8 +269,8 @@ function StepTwoMixer(init, destroy) {
     tableM.setAttribute("id", "follow-table-mixer");
     document.getElementById("follows-mixer").appendChild(tableM);
   }
-  document.getElementById("follows-mixer").style.display = "none";
-  document.getElementById("loading-mixer").style.display = "block";
+  document.getElementById("follows-mixer").classList.remove("show");
+  document.getElementById("loading-mixer").classList.add("show");
   $.ajax({
     type: "GET",
     url: "https://mixer.com/api/v1/users/" + dataUserMixer.user.id + "/follows?limit=100&page=" + pageMixer,
@@ -347,12 +309,12 @@ function StepTwoMixer(init, destroy) {
         if (countMixer > 0 && userIndexMixer < 20) {
           return StepTwoMixer(false, false);
         } else {
-          document.getElementById("loading-mixer").style.display = "none";
-          document.getElementById("follows-mixer").style.display = "block";
+          document.getElementById("loading-mixer").classList.remove("show");
+          document.getElementById("follows-mixer").classList.add("show");
         }
       } else {
-        document.getElementById("loading-mixer").style.display = "none";
-        document.getElementById("follows-mixer").style.display = "block";
+        document.getElementById("loading-mixer").classList.remove("show");
+        document.getElementById("follows-mixer").classList.add("show");
       }
     }
   });
