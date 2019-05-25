@@ -8,27 +8,6 @@ var userIndexTwitch, userIndexMixer;
 var urlStreamsTwitch;
 var dataUserTwitch, dataUserMixer;
 
-function AddListeners() {
-  document.getElementById("input-channel-twitch").addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (event.keyCode == 13) {
-      LoadChannel(document.getElementById("input-channel-twitch").value, "twitch");
-    }
-  });
-  document.getElementById("input-channel-mixer").addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (event.keyCode == 13) {
-      LoadChannel(document.getElementById("input-channel-mixer").value, "mixer");
-    }
-  });
-  document.getElementById("input-user").addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (event.keyCode == 13) {
-      LoadUser(document.getElementById("input-user").value);
-    }
-  });
-}
-
 function ToggleDisplay(selector) {
   return document.getElementById(selector).classList.toggle("show");
 }
@@ -92,8 +71,9 @@ function LoadChannel(channelName, service) {
   }
 }
 
-function LoadUser(userName) {
+function LoadUser() {
   if (userDropdown.classList.contains("show")) userDropdown.classList.remove("show");
+  var userName = document.getElementById("input-user").value;
   var oldTable = document.getElementById("follow-table-helix");
   if (oldTable) oldTable.parentNode.removeChild(oldTable);
   oldTable = document.getElementById("follow-table-mixer");
