@@ -327,3 +327,7 @@ function StepTwoMixer(init, destroy) {
 function UpdateFollowListMixer() {
   if (hasUserDataMixer) return StepTwoMixer(true, true);
 }
+
+function MakeMeFamous() {
+  document.getElementById("button-contact").classList.toggle("highlight");
+}

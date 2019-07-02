@@ -8,12 +8,14 @@
 
     <style>
 body   { margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; text-align: center; }
+button { background-color: silver; color: #262626; padding: 10px; border: 1px solid black; cursor: pointer; }
 iframe { border: none; display: block; }
 
 .title          { font-weight: bold; }
 .spanlink       { cursor: pointer; }
 .followtablediv { width: 100%; }
 .hide           { display: none; }
+.highlight      { color: #F1F1F1; }
 
 #page       { display: flex; align-items: center; height: 100vh; }
 #page-top   { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; z-index: 1; }
@@ -21,7 +23,6 @@ iframe { border: none; display: block; }
 #page-right { display: flex; background-color: #F1F1F1; overflow: hidden; }
 
 .selector-section-div        { display: inline-block; width: 260px; }
-.select-button               { background-color: #F1F1F1; color: #262626; padding: 10px; border: 1px solid black; cursor: pointer; }
 .dropdown-content            { display: none; position: absolute; width: inherit; background-color: black; color: #F1F1F1; overflow: hidden; z-index: 1; }
 .dropdown-content span       { display: block; padding: 6px 0px; }
 .dropdown-content span:hover { background-color: white; color: #262626; }
@@ -36,7 +37,7 @@ iframe { border: none; display: block; }
 <!-- PAGE TOP -->
       <div id="page-top">
         <div class="selector-section-div">
-          <button class="select-button" onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
+          <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
           <div class="dropdown-content" id="resoDropdown">
             <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
             <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
@@ -44,17 +45,20 @@ iframe { border: none; display: block; }
           </div>
         </div>
         <div class="selector-section-div">
-          <button class="select-button" id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
+          <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
           <div class="dropdown-content" id="userDropdown">
             <span><input id="input-user" style="width: 202px;" type="text" placeholder="Type a username and press Enter" /></span>
           </div>
         </div>
         <div class="selector-section-div">
-          <button class="select-button" id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
+          <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
           <div class="dropdown-content" id="channelDropdown">
             <span><input id="input-channel-twitch" style="width: 252px;" type="text" placeholder="Type twitch channel name and press Enter" /></span>
             <span><input id="input-channel-mixer" style="width: 252px;" type="text" placeholder="Type mixer channel name and press Enter" /></span>
           </div>
+        </div>
+        <div class="selector-section-div">
+          <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
         </div>
       </div>
 <!-- PAGE LEFT -->
