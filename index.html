@@ -17,50 +17,56 @@ iframe { border: none; display: block; }
 .hide           { display: none; }
 .highlight      { color: #F1F1F1; }
 
-#page       { display: flex; align-items: center; height: 100vh; }
-#page-top   { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; z-index: 1; }
-#page-left  { width: 250px; min-width: 250px; overflow: hidden; }
-#page-right { display: flex; background-color: #F1F1F1; overflow: hidden; }
+#page        { display: flex; align-items: center; height: 100vh; }
+#page-top    { position: fixed; top: 0; left: 0; right: 0; margin: 0 auto; z-index: 2; }
+#page-left   { width: 250px; min-width: 250px; overflow: hidden; }
+#page-right  { display: flex; background-color: #F1F1F1; overflow: hidden; }
+#overlay-div { position: fixed; width: 100vw; height: 100vh; }
 
 .selector-section-div        { display: inline-block; width: 260px; }
-.dropdown-content            { display: none; position: absolute; width: inherit; background-color: black; color: #F1F1F1; overflow: hidden; z-index: 1; }
+.dropdown-content            { display: none; position: absolute; width: inherit; background-color: black; color: #F1F1F1; overflow: hidden; }
 .dropdown-content span       { display: block; padding: 6px 0px; }
 .dropdown-content span:hover { background-color: white; color: #262626; }
 
-.show { display: block; }
+.show       { display: block; }
+.overlayoff { z-index: -1; }
+.overlayon  { z-index: 1; }
     </style>
 
   </head>
   <body onload="ChangeResolution('init');AddListeners();">
-<!-- PAGE -->
-    <div id="page">
+<!-- OVERLAY -->
+    <div class="overlayoff" id="overlay-div" onclick="RemoveDisplay()">
+    </div>
 <!-- PAGE TOP -->
-      <div id="page-top">
-        <div class="selector-section-div">
-          <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
-          <div class="dropdown-content" id="resoDropdown">
-            <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
-            <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
-            <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
-          </div>
-        </div>
-        <div class="selector-section-div">
-          <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
-          <div class="dropdown-content" id="userDropdown">
-            <span><input id="input-user" style="width: 202px;" type="text" placeholder="Type a username and press Enter" /></span>
-          </div>
-        </div>
-        <div class="selector-section-div">
-          <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
-          <div class="dropdown-content" id="channelDropdown">
-            <span><input id="input-channel-twitch" style="width: 252px;" type="text" placeholder="Type twitch channel name and press Enter" /></span>
-            <span><input id="input-channel-mixer" style="width: 252px;" type="text" placeholder="Type mixer channel name and press Enter" /></span>
-          </div>
-        </div>
-        <div class="selector-section-div">
-          <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
+    <div id="page-top">
+      <div class="selector-section-div">
+        <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
+        <div class="dropdown-content" id="resoDropdown">
+          <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
+          <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
+          <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
         </div>
       </div>
+      <div class="selector-section-div">
+        <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
+        <div class="dropdown-content" id="userDropdown">
+          <span><input id="input-user" style="width: 202px;" type="text" placeholder="Type a username and press Enter" /></span>
+        </div>
+      </div>
+      <div class="selector-section-div">
+        <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
+        <div class="dropdown-content" id="channelDropdown">
+          <span><input id="input-channel-twitch" style="width: 252px;" type="text" placeholder="Type twitch channel name and press Enter" /></span>
+          <span><input id="input-channel-mixer" style="width: 252px;" type="text" placeholder="Type mixer channel name and press Enter" /></span>
+        </div>
+      </div>
+      <div class="selector-section-div">
+        <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
+      </div>
+    </div>
+<!-- PAGE -->
+    <div id="page">
 <!-- PAGE LEFT -->
       <div id="page-left">
         <p class="title"><span class="spanlink" title="click to update twitch list" onclick="UpdateFollowListHelix()">[twitch]</span></p>

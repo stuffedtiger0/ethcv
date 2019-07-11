@@ -7,9 +7,26 @@ var hasUserDataMixer = false;
 var userIndexTwitch, userIndexMixer;
 var urlStreamsTwitch;
 var dataUserTwitch, dataUserMixer;
+var overlayIndex = 0;
 
 function ToggleDisplay(selector) {
-  return document.getElementById(selector).classList.toggle("show");
+  if (document.getElementById(selector).classList.toggle("show")) {
+    document.getElementById("overlay-div").classList.add("overlayon");
+    overlayIndex++;
+  } else {
+    overlayIndex--;
+  }
+  if (overlayIndex == 0) {
+    document.getElementById("overlay-div").classList.remove("overlayon");
+  }
+}
+
+function RemoveDisplay() {
+  document.getElementById("resoDropdown").classList.remove("show");
+  document.getElementById("userDropdown").classList.remove("show");
+  document.getElementById("channelDropdown").classList.remove("show");
+  document.getElementById("overlay-div").classList.remove("overlayon");
+  overlayIndex = 0;
 }
 
 function AddListeners() {
