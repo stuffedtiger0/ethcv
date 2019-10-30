@@ -12,10 +12,9 @@ button { background-color: silver; color: #262626; padding: 10px; border: 1px so
 iframe { border: none; display: block; }
 
 #page        { display: flex; align-items: center; width: 100vw; height: 100vh; }
-#page-top    { display: flex; justify-content: center; width: 100vw; position: fixed; z-index: 2; }
+#page-top    { display: flex; position: fixed; top: 5px; left: 255px; z-index: 1; }
 #page-left   { display: flex; flex-direction: column; width: 250px; min-width: 250px; height: 100%; }
-#page-right  { background-color: #F1F1F1; }
-#overlay-div { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; }
+#page-right  { display: flex; background-color: #F1F1F1; }
 
 #left-top    { width: 100%; height: 50%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow-x: hidden; overflow-y: scroll; }
 #left-bottom { width: 100%; height: 50%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; overflow-x: hidden; overflow-y: scroll; }
@@ -25,32 +24,26 @@ iframe { border: none; display: block; }
 #follows-mixer      { width: 100%; }
 #follow-table-mixer { display: flex; flex-direction: column; width: 100%; }
 
-.title            { font-weight: bold; }
-.spanlink         { cursor: pointer; }
-.live             { color: lightgreen; }
-.follow-table-div { width: 100%; text-align: center; }
-.iframe-div       { display: inline-block; }
-.hide             { display: none; }
-.highlight        { color: #F1F1F1; }
+.title      { font-weight: bold; }
+.spanlink   { cursor: pointer; }
+.live       { color: lightgreen; }
+.hide       { display: none; }
+.highlight  { color: #F1F1F1; }
 
-.selector-section-div        { display: inline-block; width: 260px; }
-.dropdown-content            { display: none; position: absolute; width: inherit; background-color: black; color: #F1F1F1; overflow: hidden; }
+.follow-table-div            { width: 100%; text-align: center; }
+.dropdown-selector-div       { position: relative; }
+.dropdown-content            { display: none; position: absolute; min-width: 200px; background-color: black; color: #F1F1F1; text-align: center; overflow: hidden; z-index: 1; }
 .dropdown-content span       { display: block; padding: 6px 0px; }
 .dropdown-content span:hover { background-color: white; color: #262626; }
 
 .show       { display: block; }
-.overlayoff { z-index: -1; }
-.overlayon  { z-index: 1; }
     </style>
 
   </head>
   <body onload="ChangeResolution('init');AddListeners();">
-<!-- OVERLAY -->
-    <div class="overlayoff" id="overlay-div" onclick="RemoveDisplay()">
-    </div>
 <!-- PAGE TOP -->
     <div id="page-top">
-      <div class="selector-section-div">
+      <div class="dropdown-selector-div">
         <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
         <div class="dropdown-content" id="resoDropdown">
           <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
@@ -58,20 +51,20 @@ iframe { border: none; display: block; }
           <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
         </div>
       </div>
-      <div class="selector-section-div">
+      <div class="dropdown-selector-div">
         <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
         <div class="dropdown-content" id="userDropdown">
-          <span><input id="input-user" style="width: 202px;" type="text" placeholder="Type a username and press Enter"></span>
+          <span><input id="input-user" type="text" placeholder="Press enter to load"></span>
         </div>
       </div>
-      <div class="selector-section-div">
+      <div class="dropdown-selector-div">
         <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
         <div class="dropdown-content" id="channelDropdown">
-          <span><input id="input-channel-twitch" style="width: 252px;" type="text" placeholder="Type twitch channel name and press Enter"></span>
-          <span><input id="input-channel-mixer" style="width: 252px;" type="text" placeholder="Type mixer channel name and press Enter"></span>
+          <span><input id="input-channel-twitch" type="text" placeholder="Press enter to load"></span>
+          <span><input id="input-channel-mixer" type="text" placeholder="Press enter to load"></span>
         </div>
       </div>
-      <div class="selector-section-div">
+      <div>
         <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
       </div>
     </div>
@@ -93,12 +86,8 @@ iframe { border: none; display: block; }
       </div>
 <!-- PAGE RIGHT -->
       <div id="page-right">
-        <div class="iframe-div">
-          <iframe id="frame-player" src="about:blank" width="16" height="9" allowfullscreen="true"></iframe>
-        </div>
-        <div class="iframe-div">
-          <iframe id="frame-chat" src="about:blank" width="340" height="9"></iframe>
-        </div>
+        <iframe id="frame-player" src="about:blank" width="16" height="9" allowfullscreen="true"></iframe>
+        <iframe id="frame-chat" src="about:blank" width="340" height="9"></iframe>
       </div>
     </div>
   </body>

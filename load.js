@@ -11,14 +11,11 @@ var g_dataUserMixer;
 var g_overlayIndex = 0;
 
 function ToggleDisplay(selector) {
-  if (document.getElementById(selector).classList.toggle("show")) {
-    document.getElementById("overlay-div").classList.add("overlayon");
-    g_overlayIndex++;
+  if (document.getElementById(selector).classList.contains("show")) {
+    RemoveDisplay();
   } else {
-    g_overlayIndex--;
-  }
-  if (g_overlayIndex == 0) {
-    document.getElementById("overlay-div").classList.remove("overlayon");
+    RemoveDisplay();
+    document.getElementById(selector).classList.toggle("show");
   }
 }
 
@@ -26,8 +23,6 @@ function RemoveDisplay() {
   document.getElementById("resoDropdown").classList.remove("show");
   document.getElementById("userDropdown").classList.remove("show");
   document.getElementById("channelDropdown").classList.remove("show");
-  document.getElementById("overlay-div").classList.remove("overlayon");
-  g_overlayIndex = 0;
 }
 
 function AddListeners() {
