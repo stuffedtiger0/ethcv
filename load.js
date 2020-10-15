@@ -40,13 +40,6 @@ function AddListeners() {
       LoadChannel(document.getElementById("input-channel-twitch").value, "twitch");
     }
   });
-  input = document.getElementById("input-channel-mixer");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      LoadChannel(document.getElementById("input-channel-mixer").value, "mixer");
-    }
-  });
 }
 
 function ChangeResolution(newReso) {
@@ -100,10 +93,6 @@ function LoadChannel(channelName, service) {
       document.getElementById("frame-player").setAttribute("src", "https://player.twitch.tv/?channel="+channelName+"&muted=false");
       document.getElementById("frame-chat").setAttribute("src", "https://www.twitch.tv/embed/"+channelName+"/chat");
       document.getElementById("frame-chat").setAttribute("width", "340");
-    } else {
-      document.getElementById("frame-player").setAttribute("src", "https://mixer.com/embed/player/"+channelName+"?muted=false");
-      document.getElementById("frame-chat").setAttribute("src", "https://mixer.com/embed/chat/"+channelName);
-      document.getElementById("frame-chat").setAttribute("width", "350");
     }
   }
 }
@@ -113,15 +102,12 @@ function LoadUser() {
   var userName = document.getElementById("input-user").value;
   var oldTable = document.getElementById("follow-table-helix");
   if (oldTable) oldTable.parentNode.removeChild(oldTable);
-  oldTable = document.getElementById("follow-table-mixer");
-  if (oldTable) oldTable.parentNode.removeChild(oldTable);
   if (userName == "") {
     document.getElementById("current-user").innerHTML = "No User Loaded";
   } else {
     document.getElementById("current-user").innerHTML = userName;
     g_userName = userName;
     StepOneHelix();
-    StepOneMixer();
   }
 }
 
@@ -129,9 +115,9 @@ async function StepOneHelix() {
   $.ajax({
     type: "GET",
     url: "https://api.twitch.tv/helix/users?login=" + g_userName,
-    headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
+    headers: { "Client-ID": "k8nkd1h57i2l2a3mp4g46iwm2z15tg" },
     success: function(data, status, jqxhr) {
-      //console.log(data);
+      console.log(data);
       g_dataUserTwitch = data;
       g_hasUserDataTwitch = true;
     },
@@ -170,7 +156,7 @@ function StepTwoHelix(init, destroy) {
   $.ajax({
     type: "GET",
     url: "https://api.twitch.tv/helix/users/follows?from_id=" + g_dataUserTwitch.data[0].id + "&first=100&after=" + g_pageHelix,
-    headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
+    headers: { "Client-ID": "k8nkd1h57i2l2a3mp4g46iwm2z15tg" },
     success: function(data, status, jqxhr) {
       //console.log(data);
       g_dataFollowsTwitch = data;
@@ -209,7 +195,7 @@ function StepThreeHelix() {
   $.ajax({
     type: "GET",
     url: g_urlStreamsTwitch,
-    headers: { "Client-ID": "88pfy9ckfkxt3mp678i4ar9b0tr2q6" },
+    headers: { "Client-ID": "k8nkd1h57i2l2a3mp4g46iwm2z15tg" },
     success: function(data, status, jqxhr) {
       //console.log(data);
       var spanT;
@@ -265,107 +251,6 @@ function UpdateFollowListHelix() {
   if (g_hasUserDataTwitch) return StepTwoHelix(true, true);
 }
 
-async function StepOneMixer() {
-  $.ajax({
-    type: "GET",
-    url: "https://mixer.com/api/v1/channels/" + g_userName,
-    headers: { "Client-ID": "07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6" },
-    success: function(data, status, jqxhr) {
-      //console.log(data);
-      g_dataUserMixer = data;
-      g_hasUserDataMixer = true;
-    },
-    complete: function(jqxhr, status) {
-      if (status == "success") {
-        return StepTwoMixer(true, false);
-      }
-    }
-  });
-}
-
-function StepTwoMixer(init, destroy) {
-  if (init) {
-    g_hasCountMixer = false;
-    g_pageMixer = 0;
-    g_hasFirstInTableMixer = false;
-    if (!destroy) {
-      let tableM = document.createElement("div");
-      tableM.setAttribute("id", "follow-table-mixer");
-      document.getElementById("follows-mixer").appendChild(tableM);
-    }
-  }
-  if (destroy) {
-    let oldTableM = document.getElementById("follow-table-mixer");
-    if (oldTableM) oldTableM.parentNode.removeChild(oldTableM);
-    let tableM = document.createElement("div");
-    tableM.setAttribute("id", "follow-table-mixer");
-    document.getElementById("follows-mixer").appendChild(tableM);
-  }
-  document.getElementById("follows-mixer").classList.remove("show");
-  document.getElementById("loading-mixer").classList.add("show");
-  $.ajax({
-    type: "GET",
-    url: "https://mixer.com/api/v1/users/" + g_dataUserMixer.user.id + "/follows?limit=100&page=" + g_pageMixer,
-    headers: { "Client-ID": "07b3b0eaa709e93934f6720d6130f2aa0ec716a93c5033d6" },
-    success: function(data, status, jqxhr) {
-      //console.log(data);
-      if (!g_hasCountMixer) {
-        g_countMixer = jqxhr.getResponseHeader("x-total-count");
-        g_countMixer -= parseInt(data.length);
-        g_hasCountMixer = true;
-      } else {
-        g_countMixer -= parseInt(data.length);
-      }
-      g_pageMixer++;
-      var spanM;
-      var isLiveMixer;
-      for (let ii = 0 ; ii < parseInt(data.length) ; ii++) {
-        spanM = document.createElement("span");
-        spanM.classList.add("spanlink");
-        spanM.index = data[ii].user.username;
-        if (data[ii].online == true) {
-          spanM.classList.add("live");
-          spanM.innerHTML = data[ii].user.username + " (" + data[ii].viewersCurrent + " viewers)";
-          spanM.title = data[ii].name;
-          isLiveMixer = true;
-        } else {
-          spanM.innerHTML = data[ii].user.username
-          isLiveMixer = false;
-        }
-        spanM.onclick = function(event) { LoadChannel(event.target.index, "mixer"); };
-        if (!g_hasFirstInTableMixer) {
-          document.getElementById("follow-table-mixer").appendChild(spanM);
-          g_hasFirstInTableMixer = true;
-        } else {
-          if (isLiveMixer) {
-            document.getElementById("follow-table-mixer").insertBefore(spanM, document.getElementById("follow-table-mixer").firstChild);
-          } else {
-            document.getElementById("follow-table-mixer").appendChild(spanM);
-          }
-        }
-      }
-    },
-    complete: function(jqxhr, status) {
-      if (status == "success") {
-        if (g_countMixer > 0) {
-          return StepTwoMixer(false, false);
-        } else {
-          document.getElementById("loading-mixer").classList.remove("show");
-          document.getElementById("follows-mixer").classList.add("show");
-        }
-      } else {
-        document.getElementById("loading-mixer").classList.remove("show");
-        document.getElementById("follows-mixer").classList.add("show");
-      }
-    }
-  });
-}
-
-function UpdateFollowListMixer() {
-  if (g_hasUserDataMixer) return StepTwoMixer(true, true);
-}
-
 function MakeMeFamous() {
   document.getElementById("button-contact").classList.toggle("highlight");
 }
-

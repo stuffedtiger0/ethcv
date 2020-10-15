@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>Ethereal Channel Viewer</title>
     <script src="jquery-3.3.1.min.js"></script>
     <script src="load.js"></script>
 
     <style>
 body   { margin: 0; background-color: #262626; color: #F1F1F1; font-family: Helvetica, Arial, sans-serif; }
-button { background-color: silver; color: #262626; padding: 10px; border: 1px solid black; cursor: pointer; }
-iframe { border: none; display: block; }
+button { display: block; background-color: silver; color: #262626; min-width: 200px; padding: 10px; border: 1px solid black; cursor: pointer; }
+iframe { border: none; display: inline; }
 
-#page        { display: flex; align-items: center; width: 100vw; height: 100vh; }
-#page-top    { display: flex; position: fixed; top: 5px; left: 255px; z-index: 2; }
-#page-left   { display: flex; flex-direction: column; width: 250px; min-width: 250px; height: 100%; }
-#page-right  { display: flex; background-color: #F1F1F1; z-index: 1; }
-
-#left-top    { height: 50%; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; overflow-y: scroll; }
-#left-bottom { height: 50%; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; overflow-y: scroll; }
+#page        { display: flex; width: 100vw; height: 100vh; }
+#page-left   { display: flex; flex-direction: column; align-items: center; overflow-x: hidden; overflow-y: scroll; width: 250px; min-width: 250px; height: 100%; }
+#page-right  { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; z-index: 1; }
 
 #follow-table-helix { width: 100vw; display: flex; flex-direction: column; align-items: center; }
-#follow-table-mixer { width: 100vw; display: flex; flex-direction: column; align-items: center; }
 
 .title      { font-weight: bold; }
 .spanlink   { cursor: pointer; }
@@ -28,9 +23,9 @@ iframe { border: none; display: block; }
 .hide       { display: none; }
 .highlight  { color: #F1F1F1; }
 
-.dropdown-selector-div       { position: relative; }
-.dropdown-content            { display: none; position: absolute; min-width: 200px; background-color: black; color: #F1F1F1; text-align: center; overflow: hidden; z-index: 2; }
-.dropdown-content span       { display: block; padding: 6px 0px; }
+.dropdown-selector-div       { display: inline-block; position: relative; }
+.dropdown-content            { display: none; position: absolute; background-color: black; color: #F1F1F1; text-align: center; overflow: hidden; z-index: 2; }
+.dropdown-content span       { display: block; min-width: 200px; padding: 6px 0px; }
 .dropdown-content span:hover { background-color: white; color: #262626; }
 
 .show       { display: block; }
@@ -38,53 +33,46 @@ iframe { border: none; display: block; }
 
   </head>
   <body onload="ChangeResolution('init');AddListeners();">
-<!-- PAGE TOP -->
-    <div id="page-top">
-      <div class="dropdown-selector-div">
-        <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
-        <div class="dropdown-content" id="resoDropdown">
-          <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
-          <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
-          <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
-        </div>
-      </div>
-      <div class="dropdown-selector-div">
-        <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
-        <div class="dropdown-content" id="userDropdown">
-          <span><input id="input-user" type="text" placeholder="Press enter to load"></span>
-        </div>
-      </div>
-      <div class="dropdown-selector-div">
-        <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
-        <div class="dropdown-content" id="channelDropdown">
-          <span><input id="input-channel-twitch" type="text" placeholder="Press enter to load"></span>
-          <span><input id="input-channel-mixer" type="text" placeholder="Press enter to load"></span>
-        </div>
-      </div>
-      <div>
-        <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
-      </div>
-    </div>
 <!-- PAGE -->
     <div id="page">
 <!-- PAGE LEFT -->
       <div id="page-left">
-        <div id="left-top">
-          <p class="title"><span class="spanlink" title="click to update twitch list" onclick="UpdateFollowListHelix()">[twitch]</span></p>
-          <p class="hide" id="invalid-username-helix">INVALID USERNAME</p>
-          <p class="hide" id="loading-helix">LOADING...</p>
-          <div class="hide" id="follows-helix"></div>
-        </div>
-        <div id="left-bottom">
-          <p class="title"><span class="spanlink" title="click to update mixer list" onclick="UpdateFollowListMixer()">[mixer]</span></p>
-          <p class="hide" id="loading-mixer">LOADING...</p>
-          <div class="hide" id="follows-mixer"></div>
-        </div>
+        <p class="title"><span class="spanlink" title="click to update follow list" onclick="UpdateFollowListHelix()">[twitch]</span></p>
+        <p class="hide" id="invalid-username-helix">INVALID USERNAME</p>
+        <p class="hide" id="loading-helix">LOADING...</p>
+        <div class="hide" id="follows-helix"></div>
       </div>
 <!-- PAGE RIGHT -->
       <div id="page-right">
-        <iframe id="frame-player" src="about:blank" width="16" height="9" allowfullscreen="true"></iframe>
-        <iframe id="frame-chat" src="about:blank" width="340" height="9"></iframe>
+	  	<div id="right-top">
+		  <div class="dropdown-selector-div">
+            <button onclick="ToggleDisplay('resoDropdown')">Video Player Size</button>
+            <div class="dropdown-content" id="resoDropdown">
+              <span class="spanlink" onclick="ChangeResolution('360p')">360p</span>
+              <span class="spanlink" onclick="ChangeResolution('480p')">480p</span>
+              <span class="spanlink" onclick="ChangeResolution('720p')">720p</span>
+            </div>
+          </div><!--
+          --><div class="dropdown-selector-div">
+            <button id="current-user" onclick="ToggleDisplay('userDropdown')">User</button>
+            <div class="dropdown-content" id="userDropdown">
+              <span><input id="input-user" type="text" placeholder="Press enter to load"></span>
+            </div>
+          </div><!--
+          --><div class="dropdown-selector-div">
+            <button id="current-channel" onclick="ToggleDisplay('channelDropdown')">Channel</button>
+            <div class="dropdown-content" id="channelDropdown">
+              <span><input id="input-channel-twitch" type="text" placeholder="Press enter to load"></span>
+            </div>
+          </div><!--
+          --><div class="dropdown-selector-div">
+            <button id="button-contact" onclick="MakeMeFamous()">Discord Contact: stuffedtiger#9803</button>
+          </div>
+	    </div>
+		<div id="right-bottom">
+		  <iframe id="frame-player" src="about:blank" parent="localhost" width="16" height="9" allowfullscreen="true"></iframe>
+		  <iframe id="frame-chat" src="about:blank" parent="localhost" width="340" height="9"></iframe>
+		</div>
       </div>
     </div>
   </body>
