@@ -15,18 +15,18 @@ function ToggleDisplay(selector) {
 
 function RemoveDisplay() {
   document.getElementById("resoDropdown").classList.remove("show");
-  //document.getElementById("userDropdown").classList.remove("show");
+  document.getElementById("userDropdown").classList.remove("show");
   document.getElementById("channelDropdown").classList.remove("show");
 }
 
 function AddListeners() {
   var input = document.getElementById("input-user");
-  /*input.addEventListener("keyup", function(event) {
+  input.addEventListener("keyup", function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
       LoadUser();
     }
-  });*/
+  });
   input = document.getElementById("input-channel-twitch");
   input.addEventListener("keyup", function(event) {
     if (event.keyCode === 13) {
@@ -138,7 +138,7 @@ function StepOneHelix() {
       "Authorization": "Bearer " + g_token
     },
     success: function(data, status, jqxhr) {
-      console.log(data);
+      //console.log(data);
       g_dataUserTwitch = data;
       g_hasUserDataTwitch = true;
     },
@@ -227,7 +227,7 @@ function StepThreeHelix() {
       //console.log(data);
       var spanT;
       var isLiveTwitch;
-      console.log(g_dataFollowsTwitch.data.length);
+      //console.log(g_dataFollowsTwitch.data.length);
       for (let ii = 0 ; ii < parseInt(g_dataFollowsTwitch.data.length) ; ii++) {
         isLiveTwitch = false;
         spanT = document.createElement("span");
