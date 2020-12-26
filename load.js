@@ -105,13 +105,6 @@ function LoadUser() {
   }
 }
 
-function AuthenticateTwitch() {
-  $.ajax({
-    type: "GET",
-    url: "https://id.twitch.tv/oauth2/authorize?client_id=k8nkd1h57i2l2a3mp4g46iwm2z15tg&redirect_uri=https://stffdtiger.github.io/ethcv/&response_type=token&scope="
-  })
-}
-
 function GetToken() {
   if (document.location.hash !== "") {
     let hash = document.location.hash.split("&");
