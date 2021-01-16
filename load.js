@@ -136,7 +136,7 @@ function GetDarkChatState() {
 }
 
 function SetDarkChatState() {
-  var cname = "darkchatstate="
+  var cname = "darkchatstate=";
   var decodedCookie = decodeURIComponent(document.cookie);
   var ca = decodedCookie.split(';');
   for (let ii = 0 ; ii < ca.length ; ii++) {
