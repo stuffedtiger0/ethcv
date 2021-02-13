@@ -42,16 +42,16 @@ function ChangeResolution(newReso) {
   date.setTime(date.getTime()+(30*24*60*60*1000));
   var expires = "; expires="+date.toGMTString();
   if (newReso == "init") {
-    var cname = "reso=";
+    var cookieVar = "reso=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (let ii = 0 ; ii < ca.length ; ii++) {
-      var c = ca[ii];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
+    var cookieArray = decodedCookie.split(';');
+    for (let ii = 0 ; ii < cookieArray.length ; ii++) {
+      var cookieTest = cookieArray[ii];
+      while (cookieTest.charAt(0) == ' ') {
+        cookieTest = cookieTest.substring(1);
       }
-      if (c.indexOf(cname) == 0) {
-        return ChangeResolution(c.substring(cname.length, c.length));
+      if (cookieTest.indexOf(cookieVar) == 0) {
+        return ChangeResolution(cookieTest.substring(cookieVar.length, cookieTest.length));
       }
     }
     return ChangeResolution("360p");
@@ -136,16 +136,17 @@ function GetDarkChatState() {
 }
 
 function SetDarkChatState() {
-  var cname = "darkchatstate=";
+  var cookieVar = "darkchatstate=";
   var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for (let ii = 0 ; ii < ca.length ; ii++) {
-    var c = ca[ii];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+  alert(decodedCookie);
+  var cookieArray = decodedCookie.split(';');
+  for (let ii = 0 ; ii < cookieArray.length ; ii++) {
+    var cookieTest = cookieArray[ii];
+    while (cookieTest.charAt(0) == ' ') {
+      cookieTest = cookieTest.substring(1);
     }
-    if (c.indexOf(cname) == 0) {
-      document.getElementById("checkbox-darkchat").checked = c.substring(cname.length, c.length);
+    if (cookieTest.indexOf(cookieVar) == 0) {
+      document.getElementById("checkbox-darkchat").checked = cookieTest.substring(cookieVar.length, cookieTest.length);
     }
   }
 }
