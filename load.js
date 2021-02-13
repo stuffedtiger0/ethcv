@@ -145,8 +145,10 @@ function SetDarkChatState() {
       cookieTest = cookieTest.substring(1);
     }
     if (cookieTest.indexOf(cookieVar) == 0) {
-      alert(cookieTest.substring(cookieVar.length, cookieTest.length));
-      document.getElementById("checkbox-darkchat").checked = cookieTest.substring(cookieVar.length, cookieTest.length);
+      var cookieCheck = cookieTest.substring(cookieVar.length, cookieTest.length);
+      if (cookieCheck == "true") {
+        document.getElementById("checkbox-darkchat").checked = cookieCheck;
+      }
     }
   }
 }
