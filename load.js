@@ -138,7 +138,6 @@ function GetDarkChatState() {
 function SetDarkChatState() {
   var cookieVar = "darkchatstate=";
   var decodedCookie = decodeURIComponent(document.cookie);
-  alert(decodedCookie);
   var cookieArray = decodedCookie.split(';');
   for (let ii = 0 ; ii < cookieArray.length ; ii++) {
     var cookieTest = cookieArray[ii];
@@ -146,6 +145,7 @@ function SetDarkChatState() {
       cookieTest = cookieTest.substring(1);
     }
     if (cookieTest.indexOf(cookieVar) == 0) {
+      alert(cookieTest.substring(cookieVar.length, cookieTest.length));
       document.getElementById("checkbox-darkchat").checked = cookieTest.substring(cookieVar.length, cookieTest.length);
     }
   }
